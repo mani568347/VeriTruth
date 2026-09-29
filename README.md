@@ -117,17 +117,9 @@ Django admin → *Social Applications* (site: `example.com` for local dev), or s
 
 ### 7. Model setup
 
-Place the fine-tuned BERT checkpoint in:
-```
-ml/bert_fake_news/best_checkpoint/
-├── config.json
-├── model.safetensors
-├── tokenizer.json
-└── tokenizer_config.json
-```
-The checkpoint is **not stored in Git** (the weights file is far larger than
-GitHub's file limit). Copy the `best_checkpoint` folder from an existing
-installation, or transfer it with an external drive / cloud storage / Git LFS.
+The BERT weights are **not stored in Git** (the weights file is far larger than
+GitHub's 100 MB limit). See **BERT Model Setup** below for how to place or fetch
+the checkpoint.
 
 **Not committed on purpose:** `.env`, model weights, training corpora under
 `detector/data/`, `media/` uploads, and local database dumps.
@@ -148,6 +140,60 @@ python manage.py runserver 127.0.0.1:8000
 ```
 Open http://127.0.0.1:8000
 
+## BERT Model Setup
+
+`model.safetensors` is ~437 MB, which exceeds GitHub's 100 MB per-file limit, so
+the weights are excluded from Git (`*.safetensors` is in `.gitignore`). No Git LFS
+is required: the source lives on GitHub and the model is obtained separately from
+the Hugging Face Hub.
+
+Target layout — the app expects exactly these files:
+```
+ml/bert_fake_news/best_checkpoint/
+├── config.json
+├── model.safetensors
+├── tokenizer.json
+└── tokenizer_config.json
+```
+
+1. **Get a checkpoint.** Either train locally
+   (`python ml/bert_training.py`, which writes
+   `ml/bert_fake_news/best_checkpoint/`) or reuse the folder from an existing
+   installation — an external drive or cloud storage works too.
+2. **Create a Hugging Face model repository** at https://huggingface.co/new,
+   e.g. `YOUR_HUGGINGFACE_USERNAME/veritruth-bert-fake-news` (public, so no token
+   is needed to download it).
+3. **Upload the four checkpoint files above** into the repository root — via the
+   web "Add files" UI or:
+   ```bash
+   hf upload YOUR_HUGGINGFACE_USERNAME/veritruth-bert-fake-news ml/bert_fake_news/best_checkpoint
+   ```
+4. **Point the project at it.** In `.env`:
+   ```
+   BERT_MODEL_ID=YOUR_HUGGINGFACE_USERNAME/veritruth-bert-fake-news
+   ```
+5. **On another machine**, after cloning and installing requirements, fetch the
+   model into the checkpoint directory:
+   ```bash
+   python scripts/download_model.py
+   ```
+   The script is idempotent: if the checkpoint is already complete it reports
+   "Model already available" and downloads nothing.
+6. **Loading order.** `ml/bert_service.py` uses the local checkpoint when all
+   required files exist; otherwise it loads `BERT_MODEL_ID` from the Hub, which
+   downloads once and reuses the local cache afterwards. The model is never
+   downloaded per request.
+7. **If neither source is available**, analysis stops with a clear message —
+   *"VeriTruth BERT model is not available. Please complete the model setup
+   described in the README."* No other model is substituted and no placeholder
+   verdict is produced.
+8. **Private repository (optional).** Set `HF_TOKEN` in the environment;
+   `huggingface_hub` picks it up automatically. Never commit a token.
+
+> **Note:** the `veritruth-bert-fake-news` repository is a placeholder name in this
+> README and in `.env.example`. The repository has not been created yet — replace
+> `YOUR_HUGGINGFACE_USERNAME` once you publish it.
+
 ## Project Structure
 
 ```
@@ -157,6 +203,7 @@ fake_news/
 ├── detector/           # Main app: views, models, auth, OCR, Groq integration
 │   └── migrations/
 ├── ml/                 # BERT inference service + model checkpoints
+├── scripts/            # Setup helpers (download_model.py)
 ├── templates/          # HTML templates
 ├── static/             # CSS / JS / images
 ├── media/              # User uploads (runtime, not committed)

@@ -12,10 +12,8 @@ import torch
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 MODEL_DIR = Path(
-    os.getenv(
-        "BERT_MODEL_DIR",
-        Path(__file__).resolve().parent / "bert_fake_news" / "best_checkpoint",
-    )
+    os.getenv("BERT_MODEL_DIR")
+    or Path(__file__).resolve().parent / "bert_fake_news" / "best_checkpoint"
 )
 DEFAULT_MAX_LENGTH = int(os.getenv("BERT_MAX_LENGTH", "256"))
 REQUIRED_CHECKPOINT_FILES = (
@@ -24,6 +22,14 @@ REQUIRED_CHECKPOINT_FILES = (
     "tokenizer_config.json",
     "tokenizer.json",
 )
+
+# Model weights are far too large for Git, so a fresh clone can also fetch them
+# from the Hugging Face Hub repository named by BERT_MODEL_ID.
+MODEL_SETUP_MESSAGE = (
+    "VeriTruth BERT model is not available. Please complete the model setup "
+    "described in the README."
+)
+PLACEHOLDER_REPO_ID = "YOUR_HUGGINGFACE_USERNAME/veritruth-bert-fake-news"
 
 _tokenizer: Any | None = None
 _model: Any | None = None
@@ -35,6 +41,20 @@ class BertModelUnavailable(RuntimeError):
     """Raised when the trained BERT artifact is not available or cannot load."""
 
 
+def _local_checkpoint_ready() -> bool:
+    return MODEL_DIR.is_dir() and all(
+        (MODEL_DIR / name).is_file() for name in REQUIRED_CHECKPOINT_FILES
+    )
+
+
+def _configured_repo_id() -> str:
+    """Return a usable Hugging Face repo id, or an empty string when unset."""
+    repo_id = (os.getenv("BERT_MODEL_ID") or "").strip()
+    if not repo_id or repo_id == PLACEHOLDER_REPO_ID:
+        return ""
+    return repo_id
+
+
 def _load_model() -> tuple[Any, Any]:
     global _model, _tokenizer
     if _model is not None and _tokenizer is not None:
@@ -43,24 +63,34 @@ def _load_model() -> tuple[Any, Any]:
     with _load_lock:
         if _model is not None and _tokenizer is not None:
             return _tokenizer, _model
-        if not MODEL_DIR.is_dir() or any(
-            not (MODEL_DIR / name).is_file() for name in REQUIRED_CHECKPOINT_FILES
-        ):
-            raise BertModelUnavailable(
-                f"Fine-tuned BERT model not found at {MODEL_DIR}. "
-                "Run ml/bert_training.py before starting predictions."
-            )
+
+        if _local_checkpoint_ready():
+            source: Any = MODEL_DIR
+            local_files_only = True
+        else:
+            repo_id = _configured_repo_id()
+            if not repo_id:
+                raise BertModelUnavailable(
+                    f"{MODEL_SETUP_MESSAGE} No local checkpoint was found at {MODEL_DIR} "
+                    "and no Hugging Face repository is configured (set BERT_MODEL_ID)."
+                )
+            # transformers downloads the repo once and reuses its local cache afterwards.
+            source = repo_id
+            local_files_only = os.getenv("HF_HUB_OFFLINE", "").lower() in ("1", "true", "yes")
+
         try:
-            tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR, local_files_only=True)
+            tokenizer = AutoTokenizer.from_pretrained(
+                source, local_files_only=local_files_only
+            )
             model = AutoModelForSequenceClassification.from_pretrained(
-                MODEL_DIR,
-                local_files_only=True,
+                source,
+                local_files_only=local_files_only,
             )
             model.to(_device)
             model.eval()
         except Exception as exc:
             raise BertModelUnavailable(
-                f"Could not load the fine-tuned BERT model from {MODEL_DIR}: {exc}"
+                f"{MODEL_SETUP_MESSAGE} (source: {source}: {exc})"
             ) from exc
         _tokenizer = tokenizer
         _model = model
@@ -80,8 +110,10 @@ def _is_development() -> bool:
 def _log_checkpoint_status(tokenizer: Any, model: Any) -> None:
     if not _is_development():
         return
-    print(f"BERT MODEL PATH: {MODEL_DIR}", flush=True)
-    print(f"MODEL EXISTS: {MODEL_DIR.is_dir()}", flush=True)
+    repo_id = _configured_repo_id()
+    source = str(MODEL_DIR) if _local_checkpoint_ready() else repo_id or "none"
+    print(f"BERT MODEL SOURCE: {source}", flush=True)
+    print(f"LOCAL CHECKPOINT: {MODEL_DIR} ({'ready' if _local_checkpoint_ready() else 'incomplete'})", flush=True)
     print(f"TOKENIZER LOADED: {tokenizer is not None}", flush=True)
     print(f"BERT MODEL LOADED: {model is not None}", flush=True)
     print(f"ID2LABEL: {getattr(model.config, 'id2label', None)}", flush=True)

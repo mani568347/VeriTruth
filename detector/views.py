@@ -814,9 +814,9 @@ def predict(request):
     try:
         prediction, confidence = bert_predict(text)
     except (BertModelUnavailable, ValueError) as exc:
-        messages.error(request, 'The analysis engine is temporarily unavailable. Please try again in a moment.')
+        messages.error(request, 'VeriTruth BERT model is not available. Please complete the model setup described in the README.')
         return render(request, 'result.html', {
-            'error': 'Analysis could not be completed. The ML model is currently unavailable. Please try again shortly.'
+            'error': 'The BERT model is not available. Please complete the model setup described in the README and restart the server.'
         })
     ml_score = float(confidence)
 

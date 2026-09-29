@@ -60,4 +60,4 @@ class PredictAccessTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'ML model is currently unavailable')
+        self.assertContains(response, 'model setup described in the README')

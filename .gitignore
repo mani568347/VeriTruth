@@ -39,9 +39,10 @@ _*.html
 tmp/
 temp/
 
-# ---- Trained model weights (too large for GitHub — see README "Model setup") ----
+# ---- Trained model weights (too large for GitHub — see README "BERT Model Setup") ----
 # The app expects ml/bert_fake_news/best_checkpoint/ to contain:
 #   config.json, model.safetensors, tokenizer.json, tokenizer_config.json
+# Fetch them with: python scripts/download_model.py
 *.safetensors
 *.pt
 *.pth
