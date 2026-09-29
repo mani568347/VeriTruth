@@ -9,9 +9,15 @@ from ml.bert_service import BertModelUnavailable
 class PredictAccessTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.bert_artifact_exists = (
-            Path(__file__).resolve().parents[1] / 'ml' / 'bert_fake_news' / 'best_checkpoint' / 'config.json'
-        ).exists()
+        checkpoint = (
+            Path(__file__).resolve().parents[1] / 'ml' / 'bert_fake_news' / 'best_checkpoint'
+        )
+        # The weights are intentionally not committed to Git, so the live
+        # inference test only runs on a machine that has the full checkpoint.
+        cls.bert_artifact_exists = all(
+            (checkpoint / name).is_file()
+            for name in ('config.json', 'model.safetensors', 'tokenizer.json')
+        )
 
     def setUp(self):
         self.user = User.objects.create_user(
@@ -54,4 +60,4 @@ class PredictAccessTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'model unavailable')
+        self.assertContains(response, 'ML model is currently unavailable')

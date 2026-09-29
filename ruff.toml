@@ -1,0 +1,20 @@
+# Ruff is the CI lint gate: it selects rules that flag genuinely broken code
+# (syntax and indentation errors, undefined names, invalid f-strings) rather
+# than formatting preferences, so the gate stays meaningful on this codebase.
+line-length = 120
+target-version = "py310"
+
+extend-exclude = [
+    ".venv",
+    "venv",
+    "pyenv",
+    "ml/bert_fake_news_old",
+]
+
+[lint]
+select = [
+    "E9",   # syntax / indentation errors
+    "F63",  # invalid f-strings, print statements, assertions
+    "F7",   # misplaced comparison / return / yield
+    "F82",  # undefined names
+]
