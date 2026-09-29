@@ -217,6 +217,11 @@ fake_news/
 - Login attempts are rate-limited by django-axes (5 failures → temporary lockout).
 - Analysis routes require authentication; logged-out visitors see a compact
   sign-in prompt before submitting.
+- Password-reset links only reach accounts whose stored `email` is real and
+  deliverable. Django deliberately shows the same "reset link sent" success page
+  for an unknown or mistyped address (so the form cannot be used to enumerate
+  accounts), so that page is not proof of delivery — confirm against the mailbox
+  itself.
 
 ## Disclaimer
 
