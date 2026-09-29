@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>Knowledge Base & FAQ</h1>
+    <p class="page-subtitle">Answers to common questions about how the platform assesses credibility and what users can analyze.</p>
+</div>
+
+<div class="legal-card vt-animate-fade faq-page">
+    <div class="faq-item active">
+        <button type="button" class="faq-question" aria-expanded="true">
+            <span>What does VeriTruth measure?</span>
+            <span class="faq-plus">+</span>
+        </button>
+        <div class="faq-answer">
+            <p>VeriTruth evaluates article text, URL content, and extracted image text to look for patterns that may suggest manipulation, bias, or weak sourcing.</p>
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false">
+            <span>How is the trust score calculated?</span>
+            <span class="faq-plus">+</span>
+        </button>
+        <div class="faq-answer">
+            <p>The score combines input type, language patterns, source trust, similarity, bias, and other supporting model signals to create a composite credibility estimate.</p>
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false">
+            <span>Is the verdict definitive?</span>
+            <span class="faq-plus">+</span>
+        </button>
+        <div class="faq-answer">
+            <p>No. The result is a probability-based assessment intended to support human judgment. Important claims should still be checked against reliable primary sources.</p>
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false">
+            <span>What inputs can I analyze?</span>
+            <span class="faq-plus">+</span>
+        </button>
+        <div class="faq-answer">
+            <p>You can submit plain text, a URL, or an uploaded image or document. The system then extracts and evaluates the content as needed.</p>
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false">
+            <span>Who can use the dashboard?</span>
+            <span class="faq-plus">+</span>
+        </button>
+        <div class="faq-answer">
+            <p>Researchers, journalists, and registered users can review overview data and historical verification results relevant to their activity.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.faq-question').forEach(button => {
+            button.addEventListener('click', function () {
+                const item = button.closest('.faq-item');
+                const isOpen = item.classList.contains('active');
+
+                document.querySelectorAll('.faq-item').forEach(entry => {
+                    entry.classList.remove('active');
+                    entry.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+                });
+
+                if (!isOpen) {
+                    item.classList.add('active');
+                    button.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

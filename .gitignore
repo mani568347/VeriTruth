@@ -1,0 +1,57 @@
+# ---- Environment & secrets ----
+.env
+.env.*
+!.env.example
+*_env_backup_pre_audit.txt
+
+# ---- Python ----
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.pytest_cache/
+
+# ---- Virtual environments ----
+.venv/
+venv/
+pyenv/
+fake_news/pyenv/
+
+# ---- Local databases / dumps ----
+db.sqlite3
+data.json
+
+# ---- Media uploads (user content) ----
+media/
+
+# ---- Editors / OS ----
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# ---- Temporary & debug artifacts ----
+*.log
+_server.log
+_*.png
+_*.html
+tmp/
+temp/
+
+# ---- Trained model weights (too large for GitHub — see README "Model setup") ----
+# The app expects ml/bert_fake_news/best_checkpoint/ to contain:
+#   config.json, model.safetensors, tokenizer.json, tokenizer_config.json
+*.safetensors
+*.pt
+*.pth
+*.bin
+model.pkl
+vectorizer.pkl
+
+# ---- Legacy / unused model directories ----
+ml/bert_fake_news_old/
+ml/bert_model/
+
+# ---- Training corpora (not needed to run the app) ----
+detector/data/

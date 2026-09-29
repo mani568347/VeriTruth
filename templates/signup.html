@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load socialaccount %}
+{% get_providers as socialaccount_providers %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/password-policy-ui.css' %}">
+<link rel="stylesheet" href="{% static 'css/password-policy-ui-light.css' %}">
+
+<div class="auth-wrapper vt-animate-fade">
+    <div class="auth-card">
+        <div class="auth-header">
+            <img src="{% static 'images/veritruth-logo.png' %}" alt="VeriTruth logo" style="width: 58px; height: 58px; object-fit: contain; display: block; margin: 0 auto 12px;">
+            <h2>Create Account</h2>
+            <p>Register credentials for full analysis & history access</p>
+        </div>
+
+        {% if error %}
+            <div class="gov-alert gov-alert-danger" role="alert" aria-live="assertive">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span>{{ error }}</span>
+            </div>
+        {% endif %}
+
+        <form method="POST" data-password-policy>
+            {% csrf_token %}
+
+            <div style="margin-bottom: 14px;">
+                <label class="vt-label" for="id_email">Email Address*</label>
+                <input id="id_email" type="email" name="email" placeholder="example@email.com" required>
+            </div>
+
+            <div style="margin-bottom: 6px;">
+                <label class="vt-label" for="id_password">Create Password*</label>
+                <div class="pw-field-wrap">
+                    <input id="id_password" type="password" name="password" data-pw placeholder="Minimum 8 characters" required autocomplete="new-password">
+                    <button type="button" class="pw-toggle" data-pw-toggle="#id_password" aria-label="Show password" aria-pressed="false">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
+                </div>
+                <div class="pw-req" data-pw-requirements></div>
+            </div>
+
+            <div style="margin-bottom: 8px;">
+                <label class="vt-label" for="id_confirm_password">Confirm Password*</label>
+                <div class="pw-field-wrap">
+                    <input id="id_confirm_password" type="password" name="confirm_password" data-pw-confirm placeholder="Repeat password exactly" required autocomplete="new-password">
+                    <button type="button" class="pw-toggle" data-pw-toggle="#id_confirm_password" aria-label="Show password" aria-pressed="false">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="pw-error" data-pw-error role="alert" aria-live="polite"></div>
+
+            <button type="submit" class="vt-btn vt-btn-primary vt-btn-full" style="margin-top: 14px;">
+                <span>Create Account</span>
+            </button>
+        </form>
+
+        <div class="auth-divider">
+            <span>OR</span>
+        </div>
+
+        <a href="{% provider_login_url 'google' process='login' auth_params='prompt=select_account' %}" class="google-btn">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" width="16" alt="Google Logo">
+            <span>Continue with Google</span>
+        </a>
+
+        <div class="auth-footer">
+            Already have an authorized account? 
+            <a href="/login/" style="font-weight: 600;">Sign In here</a>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/password-policy-ui.js' %}"></script>
+{% endblock %}

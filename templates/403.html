@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 Forbidden | VeriTruth Enterprise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #F7F9FC;
+            --surface: #FFFFFF;
+            --border: #E8EDF3;
+            --primary: #0B5CAD;
+            --danger: #EF4444;
+            --danger-bg: #FEF2F2;
+            --text-main: #0F172A;
+            --text-sub: #475569;
+            --text-muted: #64748B;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .error-card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 40px 48px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .icon-badge {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            background-color: var(--danger-bg);
+            color: var(--danger);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        .error-code {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--danger);
+        }
+        h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        p {
+            font-size: 14px;
+            color: var(--text-sub);
+            line-height: 1.6;
+        }
+        .btn-home {
+            margin-top: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: #FFFFFF;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.15s ease;
+        }
+        .btn-home:hover {
+            background-color: #08498B;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-card">
+        <div class="icon-badge">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+        </div>
+        <div class="error-code">403 Access Forbidden</div>
+        <h1>Administrator Privilege Required</h1>
+        <p>You do not have permission to access the VeriTruth Enterprise Admin Analytics Dashboard. This section is strictly restricted to authorized staff members.</p>
+        <a href="/" class="btn-home">Return to Homepage</a>
+    </div>
+</body>
+</html>

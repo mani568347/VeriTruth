@@ -1,0 +1,81 @@
+/* ==========================================================================
+   VeriTruth — Light theme overrides
+   New filename so it is not blocked by cached style.css / home-sections.css.
+   Complements the light design tokens defined in base.html :root.
+   Targets only the hardcoded (non-token) dark surfaces in the external
+   stylesheets so the whole site renders on white cards.
+   ========================================================================== */
+
+/* ---- Homepage hero + product preview ---------------------------------- */
+.landing-hero {
+    background: linear-gradient(180deg, #ffffff, #f5f8fd) !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 18px 40px rgba(15, 23, 42, 0.08) !important;
+}
+
+.eyebrow {
+    background: rgba(30, 58, 138, 0.10) !important;
+    border-color: rgba(30, 58, 138, 0.22) !important;
+}
+
+/* "Verify." accent — navy to blue for contrast on white */
+.landing-copy h1 span {
+    background: linear-gradient(135deg, #1e3a8a, #2563eb) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+}
+
+.preview-window {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+}
+
+.prediction-pill.real {
+    background: rgba(5, 150, 105, 0.12) !important;
+    color: #059669 !important;
+    border-color: rgba(5, 150, 105, 0.35) !important;
+}
+
+/* ---- Homepage content cards (style.css) -------------------------------- */
+.feature-card,
+.step-card,
+.faq-item {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 26px rgba(15, 23, 42, 0.06) !important;
+}
+
+.method-card {
+    background: linear-gradient(180deg, #ffffff, #f5f8fd) !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 26px rgba(15, 23, 42, 0.06) !important;
+}
+
+/* ---- Added home sections (home-sections.css) -------------------------- */
+.rm-card,
+.sj-step,
+.fb-chip {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 26px rgba(15, 23, 42, 0.06) !important;
+}
+
+.rm-note {
+    background: #f1f5f9 !important;
+    border-color: #e2e8f0 !important;
+}
+
+.fb-intro {
+    background: linear-gradient(180deg, #ffffff, #f5f8fd) !important;
+    border-color: #e2e8f0 !important;
+}
+
+.fb-preview {
+    background: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+}
+
+/* ---- Loading overlay scrim (slightly lighter) ------------------------- */
+.loader {
+    background-color: rgba(15, 23, 42, 0.45) !important;
+}

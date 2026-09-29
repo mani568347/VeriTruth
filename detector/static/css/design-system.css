@@ -1,0 +1,10 @@
+/* Design System Tokens */
+:root {
+    --vt-bg: #f8fafc;
+    --vt-surface: #ffffff;
+    --vt-border: #e2e8f0;
+    --vt-brand: #2563eb;
+    --vt-text-primary: #0f172a;
+    --vt-text-secondary: #334155;
+    --vt-text-muted: #64748b;
+}

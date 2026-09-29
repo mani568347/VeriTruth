@@ -1,0 +1,601 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/home-sections.css' %}">
+
+<div class="loader" id="loadingOverlay">
+    <div class="loader-box">
+        <div class="spinner"></div>
+        <div>Processing verification pipeline…</div>
+    </div>
+</div>
+
+<section class="landing-hero" aria-label="VeriTruth verification overview">
+    <div class="landing-copy">
+        <span class="eyebrow">AI-powered news verification</span>
+        <h1>Read. Analyze.<br><span>Verify.</span></h1>
+        <p>Analyze news, articles, URLs, and images with AI-powered verification, supporting signals, and clear explanations.</p>
+        <div class="hero-actions">
+            <a href="#analysis-form" class="vt-btn vt-btn-primary vt-btn-lg" data-login-gate>Start Analysis</a>
+            <a href="#how-it-works" class="vt-btn vt-btn-secondary vt-btn-lg">How It Works</a>
+        </div>
+        <div class="hero-stats">
+            <div>
+                <strong>4.9/5</strong>
+                <span>Trust rating</span>
+            </div>
+            <div>
+                <strong>3 inputs</strong>
+                <span>Text, URL, image</span>
+            </div>
+            <div>
+                <strong>AI explain</strong>
+                <span>Clear reasoning</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-preview" aria-hidden="true">
+        <div class="preview-window">
+            <div class="preview-header">
+                <span class="dot red"></span>
+                <span class="dot amber"></span>
+                <span class="dot green"></span>
+            </div>
+            <div class="preview-panel">
+                <div class="preview-summary">
+                    <span class="mini-label">Prediction</span>
+                    <div class="prediction-pill real">REAL</div>
+                    <div class="prediction-score">85% confidence</div>
+                </div>
+                <div class="preview-metrics">
+                    <div>
+                        <span>Trust Score</span>
+                        <strong>88%</strong>
+                    </div>
+                    <div>
+                        <span>Source</span>
+                        <strong>83%</strong>
+                    </div>
+                    <div>
+                        <span>Similarity</span>
+                        <strong>91%</strong>
+                    </div>
+                </div>
+                <div class="progress-list">
+                    <div class="progress-row">
+                        <label>Trust</label>
+                        <div class="progress-bar"><span style="width: 88%"></span></div>
+                    </div>
+                    <div class="progress-row">
+                        <label>Source</label>
+                        <div class="progress-bar"><span style="width: 83%"></span></div>
+                    </div>
+                    <div class="progress-row">
+                        <label>Similarity</label>
+                        <div class="progress-bar"><span style="width: 91%"></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="analysis-form" class="workspace-panel">
+    <div class="workspace-main">
+        <div class="analysis-card vt-animate-fade">
+            <div class="analysis-card-header">
+                <div>
+                    <h2 class="vt-card-title">Analyze News</h2>
+                    <p class="vt-card-subtitle">Use the tool below to verify text, URLs, or images.</p>
+                </div>
+                <div class="vt-tabs" role="tablist" aria-label="Input mode">
+                    <button type="button" class="vt-tab active">Text</button>
+                    <button type="button" class="vt-tab">URL</button>
+                    <button type="button" class="vt-tab">Image</button>
+                </div>
+            </div>
+
+            <form action="/predict/" method="post" enctype="multipart/form-data" id="analyze-form-main" onsubmit="showLoader()">
+                {% csrf_token %}
+                {# Language selection is stored by JS in localStorage and injected here before submit #}
+                <input type="hidden" name="selected_language" id="selected_language_field" value="en">
+
+                <div id="field-text">
+                    <label class="vt-label" for="newsBox">Article text</label>
+                    <textarea class="vt-textarea" id="newsBox" name="news" placeholder="Paste any article, statement, or headline to verify."></textarea>
+                    <div class="form-row-meta">
+                        <span class="form-hint">Minimum 30 characters recommended.</span>
+                        <span class="form-hint vt-mono" id="charCounter">0 characters</span>
+                    </div>
+                </div>
+
+                <div id="field-url" style="display: none;">
+                    <label class="vt-label" for="urlInput">Article URL</label>
+                    <input class="vt-mono" id="urlInput" type="text" name="url" placeholder="https://example.com/news/article">
+                    <div class="form-hint form-row-meta">The system will extract the content and evaluate its credibility.</div>
+                </div>
+
+                <div id="field-upload" style="display: none;">
+                    <label class="vt-label" for="fileInput">Upload image or document</label>
+                    <label class="upload-box" for="fileInput">
+                        <span class="upload-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        </span>
+                        <span class="upload-copy">
+                            <strong>Choose a file to upload</strong>
+                            <span>PNG, JPG, PDF, or TXT supported for OCR and extraction.</span>
+                        </span>
+                    </label>
+                    <input class="upload-input" id="fileInput" type="file" name="file">
+                    <div class="form-hint form-row-meta" id="fileNameDisplay">No file selected yet.</div>
+                </div>
+
+                <div class="submit-row">
+                    <button type="submit" class="vt-btn vt-btn-primary vt-btn-lg vt-btn-full">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <span>Analyze News</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <aside class="workspace-side">
+        <div class="vt-card quick-panel">
+            <div class="vt-card-header">
+                <span class="vt-card-title">Quick checks</span>
+                <span class="vt-badge vt-badge-neutral">Sample</span>
+            </div>
+            <div class="quick-list">
+                <button type="button" class="preset-btn" onclick="fillPreset('Scientists at the National Energy Laboratory have confirmed a breakthrough in commercial clean fusion energy with positive net output.')">
+                    <span>Factual Research Report</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </button>
+                <button type="button" class="preset-btn" onclick="fillPreset('URGENT: Government secret order bans paper currency overnight! Shocking leak reveals full economic plan!')">
+                    <span>Sensational Clickbait</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </button>
+                <button type="button" class="preset-btn" onclick="fillPreset('https://www.thehindu.com/news/national/central-bank-announces-quarterly-policy-rates/article.ece')">
+                    <span>Verified News URL</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="vt-card quick-panel">
+            <div class="vt-card-header">
+                <span class="vt-card-title">Why it matters</span>
+            </div>
+            <ul class="check-list">
+                <li>Paste complete article text for deeper context.</li>
+                <li>Compare source trust and similarity signals.</li>
+                <li>Review AI explanations for transparent reasoning.</li>
+            </ul>
+        </div>
+    </aside>
+</section>
+
+<section class="feature-section">
+    <div class="section-heading center">
+        <span class="eyebrow">Core capabilities</span>
+        <h2>Built for credible verification at every step.</h2>
+    </div>
+
+    <div class="feature-grid">
+        <article class="feature-card">
+            <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M8 9h8"></path><path d="M8 13h5"></path></svg>
+            </div>
+            <h3>Text Analysis</h3>
+            <p>Analyze article text for suspicious language, weak evidence, or misleading framing.</p>
+        </article>
+
+        <article class="feature-card">
+            <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L12 4"></path><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L12 20"></path></svg>
+            </div>
+            <h3>URL Analysis</h3>
+            <p>Extract and assess submitted news URLs for source trust and content relevance.</p>
+        </article>
+
+        <article class="feature-card">
+            <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M7 19h10"></path><path d="M9 9h6"></path><path d="M9 13h6"></path></svg>
+            </div>
+            <h3>Image / OCR</h3>
+            <p>Extract text from uploaded screenshots or headlines and analyze the source content.</p>
+        </article>
+
+        <article class="feature-card">
+            <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 8h.01"></path><path d="M11 12h1v4h1"></path></svg>
+            </div>
+            <h3>AI Explanation</h3>
+            <p>Turn model output into a readable summary with evidence and verdict reasoning.</p>
+        </article>
+
+        <article class="feature-card">
+            <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14.5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            </div>
+            <h3>Confidence Analysis</h3>
+            <p>See the model confidence and trust metrics behind each final prediction.</p>
+        </article>
+
+        <article class="feature-card">
+            <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18"></path><path d="M12 3v18"></path><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg>
+            </div>
+            <h3>Analysis History</h3>
+            <p>Review prior checks and keep a transparent record of previous results.</p>
+        </article>
+    </div>
+</section>
+
+<section id="how-it-works" class="process-section">
+    <div class="section-heading center">
+        <span class="eyebrow">How VeriTruth works</span>
+        <h2>From input to insight in a few steps.</h2>
+    </div>
+
+    <div class="steps-grid">
+        <div class="step-card">
+            <span class="step-number">01</span>
+            <h3>Input</h3>
+            <p>User submits news text, a URL, or an image for review.</p>
+        </div>
+        <div class="step-card">
+            <span class="step-number">02</span>
+            <h3>Process</h3>
+            <p>The system extracts and prepares the content for reliable analysis.</p>
+        </div>
+        <div class="step-card">
+            <span class="step-number">03</span>
+            <h3>AI Analysis</h3>
+            <p>NLP and ML models evaluate the content using trust and language signals.</p>
+        </div>
+        <div class="step-card">
+            <span class="step-number">04</span>
+            <h3>Prediction</h3>
+            <p>The system determines whether the content is likely real or fake.</p>
+        </div>
+        <div class="step-card">
+            <span class="step-number">05</span>
+            <h3>Explanation</h3>
+            <p>Each result is summarized in plain language with supporting signals.</p>
+        </div>
+    </div>
+</section>
+
+<section class="result-meaning-section" aria-labelledby="result-meaning-title">
+    <div class="section-heading center">
+        <span class="eyebrow">Understanding your result</span>
+        <h2 id="result-meaning-title">What Your Result Means</h2>
+    </div>
+
+    <p class="rm-intro">VeriTruth shows different signals to help you understand the analysis. Each score has a different meaning.</p>
+
+    <div class="rm-grid">
+        <article class="rm-card rm-card--prediction">
+            <h3>Prediction</h3>
+            <span class="rm-example">FAKE / REAL <span class="rm-tag">Example</span></span>
+            <p>This is the BERT model's classification of the submitted content. It is the model's best judgement, not a guaranteed fact.</p>
+        </article>
+
+        <article class="rm-card rm-card--confidence">
+            <h3>Model Confidence</h3>
+            <span class="rm-example">83% <span class="rm-tag">Example</span></span>
+            <p>This shows how confident the BERT model is in its selected prediction. Confidence refers to the model's certainty about the class it chose — it is not a guaranteed probability that the article is true or false.</p>
+        </article>
+
+        <article class="rm-card rm-card--trust">
+            <h3>Trust Index</h3>
+            <span class="rm-example">49% <span class="rm-tag">Example</span></span>
+            <p>This is a combined score based on the available supporting signals, such as:</p>
+            <ul class="rm-signals">
+                <li>Source authority</li>
+                <li>Similarity</li>
+                <li>Headline alignment</li>
+                <li>Language &amp; bias</li>
+                <li>Recency</li>
+                <li>Author info</li>
+            </ul>
+        </article>
+    </div>
+
+    <p class="rm-note">These measures should be read together. No single score should be treated as absolute proof.</p>
+</section>
+
+<section class="multi-method-section">
+    <div class="section-heading center">
+        <span class="eyebrow">Multi-method analysis</span>
+        <h2>One system, multiple input types.</h2>
+    </div>
+
+    <div class="method-grid">
+        <article class="method-card">
+            <div class="method-icon">Text</div>
+            <h3>Text</h3>
+            <p>Paste article content and analyze it with language and model-based checks.</p>
+        </article>
+
+        <article class="method-card">
+            <div class="method-icon">URL</div>
+            <h3>URL</h3>
+            <p>Submit a news article URL for extraction, source review, and verification.</p>
+        </article>
+
+        <article class="method-card">
+            <div class="method-icon">Image</div>
+            <h3>Image</h3>
+            <p>Upload a screenshot or news image and extract text using OCR before analysis.</p>
+        </article>
+    </div>
+</section>
+
+<section class="share-journey-section" aria-labelledby="share-journey-title">
+    <div class="section-heading center">
+        <span class="eyebrow">A simple habit</span>
+        <h2 id="share-journey-title">Before You Share</h2>
+    </div>
+
+    <p class="sj-tagline">Pause. Check. Verify.</p>
+
+    <div class="sj-track">
+        <div class="sj-step">
+            <span class="sj-num">01</span>
+            <h3>Pause</h3>
+            <p>Don't share a surprising claim immediately.</p>
+        </div>
+
+        <div class="sj-connector sj-connector--h" aria-hidden="true">→</div>
+        <div class="sj-connector sj-connector--v" aria-hidden="true">→</div>
+
+        <div class="sj-step">
+            <span class="sj-num">02</span>
+            <h3>Check</h3>
+            <p>Review the prediction, confidence and supporting signals.</p>
+        </div>
+
+        <div class="sj-connector sj-connector--h" aria-hidden="true">→</div>
+        <div class="sj-connector sj-connector--v" aria-hidden="true">→</div>
+
+        <div class="sj-step">
+            <span class="sj-num">03</span>
+            <h3>Verify</h3>
+            <p>Check reliable sources and supporting evidence before treating a claim as confirmed.</p>
+        </div>
+    </div>
+</section>
+
+<section class="feedback-intro-section" aria-labelledby="feedback-intro-title">
+    <div class="fb-intro">
+        <div class="fb-intro__text">
+            <span class="eyebrow">Help us improve</span>
+            <h3 id="feedback-intro-title">Your Feedback Matters</h3>
+            <p>Think an analysis may be incorrect or unclear? Let us know what you think.</p>
+            <p class="fb-intro__hint">Feedback is attached to a specific analysis. Open a result from your history to share whether it was helpful. Reviewed feedback can help improve future model development.</p>
+            <a class="vt-btn vt-btn-primary fb-intro__cta" href="{% url 'history' %}">Give Feedback</a>
+        </div>
+
+        <div class="fb-preview" aria-hidden="true">
+            <p class="fb-preview__q">Was this analysis helpful?</p>
+            <div class="fb-preview__choices">
+                <span class="fb-chip fb-chip--yes">👍 Helpful</span>
+                <span class="fb-chip fb-chip--no">👎 Not helpful</span>
+            </div>
+            <p class="fb-preview__note">Your feedback can help us identify unclear or incorrect results.</p>
+        </div>
+    </div>
+</section>
+
+<section class="faq-section">
+    <div class="section-heading center">
+        <span class="eyebrow">FAQ</span>
+        <h2>Questions people usually ask.</h2>
+    </div>
+
+    <div class="faq-list">
+        <div class="faq-item active">
+            <button type="button" class="faq-question" aria-expanded="true">
+                <span>What is VeriTruth?</span>
+                <span class="faq-plus">+</span>
+            </button>
+            <div class="faq-answer">
+                <p>VeriTruth is an AI-powered verification platform designed to help users assess whether online news content is likely trustworthy, suspicious, or misleading.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button type="button" class="faq-question" aria-expanded="false">
+                <span>How does fake news detection work?</span>
+                <span class="faq-plus">+</span>
+            </button>
+            <div class="faq-answer">
+                <p>It evaluates text, source trust, similarity with reliable content, and tone or bias signals before producing a prediction and explanation.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button type="button" class="faq-question" aria-expanded="false">
+                <span>What inputs can I analyze?</span>
+                <span class="faq-plus">+</span>
+            </button>
+            <div class="faq-answer">
+                <p>You can analyze article text, URLs, or uploaded images and documents that contain text for OCR extraction.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button type="button" class="faq-question" aria-expanded="false">
+                <span>Can I analyze a news URL?</span>
+                <span class="faq-plus">+</span>
+            </button>
+            <div class="faq-answer">
+                <p>Yes. The platform can extract the content from a supplied URL and evaluate it using source and text analysis signals.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button type="button" class="faq-question" aria-expanded="false">
+                <span>Can VeriTruth read text from an image?</span>
+                <span class="faq-plus">+</span>
+            </button>
+            <div class="faq-answer">
+                <p>Yes. Uploaded screenshots and document images can be processed with OCR to extract the relevant text for analysis.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button type="button" class="faq-question" aria-expanded="false">
+                <span>How is the final prediction generated?</span>
+                <span class="faq-plus">+</span>
+            </button>
+            <div class="faq-answer">
+                <p>The final prediction combines machine learning classification, confidence, source reputation, and other signal scores into a composite trust verdict.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button type="button" class="faq-question" aria-expanded="false">
+                <span>Does VeriTruth guarantee every prediction is correct?</span>
+                <span class="faq-plus">+</span>
+            </button>
+            <div class="faq-answer">
+                <p>No system can guarantee absolute certainty. VeriTruth provides a probability-based assessment to assist human review, not replace critical judgment.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function showLoader() {
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) overlay.style.display = 'flex';
+    }
+
+    function fillPreset(text) {
+        const textTab = document.querySelectorAll('.vt-tab')[0];
+        const urlTab = document.querySelectorAll('.vt-tab')[1];
+
+        if (text.startsWith('http')) {
+            urlTab.click();
+            const urlInput = document.getElementById('urlInput');
+            if (urlInput) urlInput.value = text;
+        } else {
+            textTab.click();
+            const newsBox = document.getElementById('newsBox');
+            if (newsBox) {
+                newsBox.value = text;
+                const charCounter = document.getElementById('charCounter');
+                if (charCounter) charCounter.textContent = `${text.length} characters`;
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const tabs = document.querySelectorAll('.vt-tab');
+        const fields = {
+            'Text': document.getElementById('field-text'),
+            'URL': document.getElementById('field-url'),
+            'Image': document.getElementById('field-upload')
+        };
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function (event) {
+                event.preventDefault();
+                tabs.forEach(item => item.classList.remove('active'));
+                tab.classList.add('active');
+
+                const selected = tab.textContent.trim();
+                Object.keys(fields).forEach(key => {
+                    if (fields[key]) {
+                        fields[key].style.display = key === selected ? 'block' : 'none';
+                    }
+                });
+            });
+        });
+
+        const queryModes = {
+            'text': 'Text',
+            'url': 'URL',
+            'image': 'Image'
+        };
+        const requestedMode = queryModes[new URLSearchParams(window.location.search).get('mode')];
+        if (requestedMode) {
+            const requestedTab = Array.from(tabs).find(tab => tab.textContent.trim() === requestedMode);
+            if (requestedTab) requestedTab.click();
+            const analysisForm = document.getElementById('analysis-form');
+            if (analysisForm) analysisForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        const newsBox = document.getElementById('newsBox');
+        const charCounter = document.getElementById('charCounter');
+        if (newsBox && charCounter) {
+            newsBox.addEventListener('input', function () {
+                charCounter.textContent = `${newsBox.value.length} characters`;
+            });
+        }
+
+        const fileInput = document.getElementById('fileInput');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        if (fileInput && fileNameDisplay) {
+            fileInput.addEventListener('change', function () {
+                if (fileInput.files.length > 0) {
+                    fileNameDisplay.textContent = `Selected file: ${fileInput.files[0].name}`;
+                    fileNameDisplay.style.color = 'var(--vt-brand)';
+                }
+            });
+        }
+
+        document.querySelectorAll('.faq-question').forEach(button => {
+            button.addEventListener('click', function () {
+                const item = button.closest('.faq-item');
+                const isOpen = item.classList.contains('active');
+
+                document.querySelectorAll('.faq-item').forEach(entry => {
+                    entry.classList.remove('active');
+                    entry.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+                });
+
+                if (!isOpen) {
+                    item.classList.add('active');
+                    button.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+    });
+
+    /* ── Language → hidden form field sync ──────────────────────────────── */
+    (function () {
+        var STORAGE_KEY = 'vt_selected_language';
+        var langSelect  = document.getElementById('languageSelect');
+        var hiddenField = document.getElementById('selected_language_field');
+
+        function applyLang(code) {
+            if (hiddenField) hiddenField.value = code || 'en';
+            try { localStorage.setItem(STORAGE_KEY, code); } catch(e) {}
+        }
+
+        // Restore persisted selection on page load
+        var saved = null;
+        try { saved = localStorage.getItem(STORAGE_KEY); } catch(e) {}
+        if (saved && langSelect) {
+            langSelect.value = saved;
+            applyLang(saved);
+            // Trigger Google Translate sync if widget is ready
+            if (typeof syncGoogleLanguage === 'function') syncGoogleLanguage();
+        }
+
+        // Keep in sync whenever the user changes the selector
+        if (langSelect) {
+            langSelect.addEventListener('change', function () {
+                applyLang(langSelect.value);
+            });
+        }
+    }());
+</script>
+
+{% endblock %}

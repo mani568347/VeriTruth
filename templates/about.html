@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="page-header">
+    <h1>Built to help you verify information.</h1>
+    <p class="page-subtitle">VeriTruth combines AI analysis, source checks, and transparent explanations to help users assess the credibility of online stories.</p>
+</div>
+
+<div class="legal-card vt-animate-fade">
+    <div class="legal-section">
+        <h2>Our mission</h2>
+        <p>VeriTruth helps researchers, journalists, and everyday users review information with clear evidence, transparent scoring, and understandable reporting.</p>
+    </div>
+
+    <div class="legal-section">
+        <h2>Three-stage verification pipeline</h2>
+        <div class="timeline-steps" style="margin-top: 16px;">
+            <div class="timeline-item">
+                <div class="timeline-badge">1</div>
+                <div class="timeline-content">
+                    <h3>Input</h3>
+                    <p>Users submit article text, URLs, or images for analysis.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-badge">2</div>
+                <div class="timeline-content">
+                    <h3>Signal extraction</h3>
+                    <p>The platform evaluates source trust, language pattern, bias cues, and similarity.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-badge">3</div>
+                <div class="timeline-content">
+                    <h3>Report</h3>
+                    <p>VeriTruth generates a verdict and explanation to make the outcome easier to interpret.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="legal-section" style="margin-top: 32px;">
+        <h2>Signal components</h2>
+        <div class="feature-grid" style="margin-top: 16px;">
+            <article class="feature-card">
+                <h3>AI-based detection</h3>
+                <p>Applies trained classification logic to evaluate content patterns and confidence.</p>
+            </article>
+            <article class="feature-card">
+                <h3>Multiple input methods</h3>
+                <p>Supports text, URL, and OCR-based image analysis in one platform.</p>
+            </article>
+            <article class="feature-card">
+                <h3>Source analysis</h3>
+                <p>Reviews the source and reference signals that may affect overall trust.</p>
+            </article>
+            <article class="feature-card">
+                <h3>Transparent explanations</h3>
+                <p>Provides human-readable reasoning that makes the decision process easier to follow.</p>
+            </article>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

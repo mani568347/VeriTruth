@@ -1,0 +1,1613 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VeriTruth | Enterprise AI News Verification Platform</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/theme-light.css' %}">
+
+    <style>
+        :root {
+            --vt-bg: #f8fafc;
+            --vt-canvas: #ffffff;
+            --vt-surface: #ffffff;
+            --vt-surface-strong: #f1f5f9;
+            --vt-surface-hover: #f1f5f9;
+            --vt-surface-active: #e2e8f0;
+            --vt-border: #e2e8f0;
+            --vt-border-dark: #e2e8f0;
+            --vt-border-strong: rgba(30, 58, 138, 0.45);
+            --vt-text-primary: #0f172a;
+            --vt-text-secondary: #334155;
+            --vt-text-muted: #64748b;
+            --vt-text-light: #334155;
+            --vt-brand: #1e3a8a;
+            --vt-brand-hover: #2548b0;
+            --vt-brand-light: rgba(30, 58, 138, 0.10);
+            --vt-brand-border: rgba(30, 58, 138, 0.28);
+            --vt-info: #2563eb;
+            --vt-info-light: rgba(37, 99, 235, 0.10);
+            --vt-trusted: #059669;
+            --vt-verified: #059669;
+            --vt-verified-light: rgba(5, 150, 105, 0.12);
+            --vt-verified-border: rgba(5, 150, 105, 0.32);
+            --vt-disputed: #dc2626;
+            --vt-disputed-light: rgba(220, 38, 38, 0.10);
+            --vt-disputed-border: rgba(220, 38, 38, 0.28);
+            --vt-warning: #d97706;
+            --vt-warning-light: rgba(217, 119, 6, 0.12);
+            --vt-warning-border: rgba(217, 119, 6, 0.32);
+            --vt-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --vt-font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+            --vt-radius-sm: 8px;
+            --vt-radius-md: 12px;
+            --vt-radius-lg: 18px;
+            --vt-radius-xl: 22px;
+            --vt-radius-pill: 9999px;
+            --vt-shadow-sm: 0 6px 18px rgba(15, 23, 42, 0.06);
+            --vt-shadow-md: 0 12px 30px rgba(15, 23, 42, 0.10);
+            --vt-shadow-lg: 0 26px 60px rgba(15, 23, 42, 0.14);
+            --vt-max-width: 1200px;
+            --vt-header-height: 64px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; overflow-x: clip; }
+        body { font-family: var(--vt-font-sans); background: radial-gradient(ellipse 80% 340px at 50% -60px, rgba(37, 99, 235, 0.22), transparent 70%), radial-gradient(ellipse 50% 260px at 85% -40px, rgba(124, 58, 237, 0.14), transparent 70%), var(--vt-bg); background-attachment: fixed; color: var(--vt-text-secondary); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; overflow-x: clip; overflow-y: visible; }
+        a { color: var(--vt-brand); text-decoration: none; transition: color 0.15s ease, transform 0.15s ease; }
+        a:hover { color: var(--vt-brand-hover); }
+        h1, h2, h3, h4, h5, h6 { color: var(--vt-text-primary); font-weight: 700; line-height: 1.2; letter-spacing: -0.03em; }
+        input[type="text"], input[type="email"], input[type="password"], textarea, select {
+            font-family: var(--vt-font-sans); font-size: 14px; color: var(--vt-text-primary); background-color: #ffffff; border: 1px solid var(--vt-border); border-radius: var(--vt-radius-md); padding: 9px 12px; width: 100%; transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
+            outline: none; border-color: var(--vt-brand); box-shadow: 0 0 0 3px rgba(30,58,138,0.15);
+        }
+        textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+        .site-shell { min-height: 100vh; min-width: 0; width: 100%; display: flex; flex-direction: column; }
+        .topbar {
+            position: sticky !important;
+            top: 12px;
+            z-index: 100;
+            height: 64px;
+            width: auto;
+            margin: 12px 14px 0;
+            background: linear-gradient(135deg, rgba(23, 37, 84, 0.42), rgba(30, 41, 59, 0.30));
+            backdrop-filter: blur(22px) saturate(1.5);
+            -webkit-backdrop-filter: blur(22px) saturate(1.5);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(2, 6, 23, 0.25);
+        }
+        .topbar-inner {
+            max-width: none;
+            margin: 0;
+            padding: 0 24px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+        .brand-wrapper { display: flex; align-items: center; gap: 10px; }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 17px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+        }
+        .brand .wordmark__truth {
+            background: linear-gradient(135deg, #2461ff, #45a1ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .brand-mark {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            flex: 0 0 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+        }
+        .nav-dropdown {
+            position: relative;
+        }
+        .nav-menu-trigger {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.78);
+            background: transparent;
+            border-radius: 10px;
+            border: 0;
+            cursor: pointer;
+            transition: color 0.15s ease, background-color 0.15s ease;
+        }
+        .nav-menu-trigger:hover,
+        .nav-links a:hover,
+        .nav-menu-trigger.active { color: #ffffff; background: rgba(255, 255, 255, 0.10); }
+        .nav-links a {
+            padding: 8px 10px;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.78);
+            border-radius: 10px;
+            transition: color 0.15s ease, background-color 0.15s ease;
+        }
+        .nav-links a.active { color: #ffffff; background: rgba(255, 255, 255, 0.12); font-weight: 600; }
+        .nav-dropdown-panel {
+            position: absolute;
+            top: calc(100% + 12px);
+            right: 0;
+            width: min(560px, 72vw);
+            background: #ffffff;
+            border: 1px solid var(--vt-border);
+            border-radius: 18px;
+            box-shadow: var(--vt-shadow-lg);
+            padding: 18px 16px;
+            display: none;
+            z-index: 20;
+        }
+        .nav-dropdown-panel.open {
+            display: block;
+        }
+        .nav-dropdown-panel::before {
+            content: "";
+            position: absolute;
+            top: -7px;
+            right: 28px;
+            width: 14px;
+            height: 14px;
+            background: #ffffff;
+            border-left: 1px solid var(--vt-border);
+            border-top: 1px solid var(--vt-border);
+            transform: rotate(45deg);
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--vt-border);
+            background: #f8fafc;
+            color: var(--vt-text-secondary);
+        }
+        .menu-item:hover { background: var(--vt-brand-light); color: var(--vt-brand); }
+        .menu-icon {
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: var(--vt-brand-light);
+            color: var(--vt-brand);
+            border: 1px solid var(--vt-brand-border);
+            font-size: 14px;
+        }
+        .menu-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+        .menu-text strong {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--vt-text-primary);
+        }
+        .menu-text span {
+            margin-top: 4px;
+            font-size: 11px;
+            color: var(--vt-text-muted);
+        }
+        .nav-user {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-family: var(--vt-font-mono);
+            color: var(--vt-text-primary);
+            background: #f1f5f9;
+            border: 1px solid var(--vt-border);
+            border-radius: var(--vt-radius-pill);
+        }
+        .nav-links .vt-btn-primary {
+            background: linear-gradient(135deg, #2563eb, #4f7cff);
+            border: 1px solid rgba(147, 180, 255, 0.4);
+            box-shadow: 0 10px 24px rgba(46, 92, 230, 0.38);
+            border-radius: 10px;
+            padding: 10px 16px;
+            color: #ffffff !important;
+        }
+        .nav-links .vt-btn-primary:hover {
+            background: linear-gradient(135deg, #3572f0, #618cff);
+        }
+        /* ── Custom language dropdown (drives the hidden native select) ── */
+        .vt-lang { position: relative; }
+        .vt-lang__native {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .vt-lang__btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            background: #f1f5f9;
+            border: 1px solid var(--vt-border);
+            color: var(--vt-text-secondary);
+            font-family: inherit;
+            font-size: 12.5px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+        }
+        .vt-lang__btn:hover {
+            background: var(--vt-brand-light);
+            border-color: var(--vt-brand-border);
+        }
+        .vt-lang__btn:focus-visible {
+            outline: 2px solid var(--vt-brand);
+            outline-offset: 2px;
+        }
+        .vt-lang__globe { opacity: 0.75; }
+        .vt-lang__chev { transition: transform 0.2s ease; }
+        .vt-lang.open .vt-lang__chev { transform: rotate(180deg); }
+        .vt-lang__menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            min-width: 152px;
+            margin: 0;
+            padding: 6px;
+            list-style: none;
+            background: #ffffff;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid var(--vt-border);
+            border-radius: 12px;
+            box-shadow: var(--vt-shadow-lg);
+            z-index: 80;
+            opacity: 0;
+            transform: translateY(-6px) scale(0.97);
+            transform-origin: top right;
+            pointer-events: none;
+            transition: opacity 0.18s ease, transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.15);
+        }
+        .vt-lang.open .vt-lang__menu {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+        .vt-lang__menu li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            color: var(--vt-text-secondary);
+            cursor: pointer;
+            outline: none;
+            transition: background 0.14s ease, color 0.14s ease;
+        }
+        .vt-lang.open .vt-lang__menu li { animation: vt-lang-item 0.24s ease both; }
+        .vt-lang__menu li:nth-child(1) { animation-delay: 0.02s; }
+        .vt-lang__menu li:nth-child(2) { animation-delay: 0.04s; }
+        .vt-lang__menu li:nth-child(3) { animation-delay: 0.06s; }
+        .vt-lang__menu li:nth-child(4) { animation-delay: 0.08s; }
+        .vt-lang__menu li:nth-child(5) { animation-delay: 0.10s; }
+        .vt-lang__menu li:nth-child(6) { animation-delay: 0.12s; }
+        .vt-lang__menu li:nth-child(7) { animation-delay: 0.14s; }
+        .vt-lang__menu li:nth-child(8) { animation-delay: 0.16s; }
+        .vt-lang__menu li:nth-child(9) { animation-delay: 0.18s; }
+        @keyframes vt-lang-item {
+            from { opacity: 0; transform: translateY(-4px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .vt-lang__menu li:hover,
+        .vt-lang__menu li:focus-visible {
+            background: var(--vt-brand-light);
+            color: var(--vt-brand);
+        }
+        .vt-lang__menu li[aria-selected="true"] {
+            color: var(--vt-brand);
+            font-weight: 700;
+        }
+        .vt-lang__menu li[aria-selected="true"]::after {
+            content: "✓";
+            font-size: 11px;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .vt-lang__menu,
+            .vt-lang__btn,
+            .vt-lang__chev,
+            .vt-lang__menu li { transition: none; animation: none !important; }
+        }
+        .language-translate-widget {
+            position: absolute;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+        /* Hide Google Translate's injected "Translated into…" banner bar
+           and undo the ~40px page offset Google applies while translating. */
+        body { top: 0 !important; }
+        .goog-te-banner-frame,
+        .skiptranslate iframe,
+        #goog-gt-tt { display: none !important; }
+        .menu-toggle { display: none; background: #f1f5f9; border: 1px solid var(--vt-border); border-radius: var(--vt-radius-md); color: var(--vt-text-primary); padding: 6px 10px; cursor: pointer; }
+        .app-shell { display: grid; grid-template-columns: 220px minmax(0, 1fr); min-width: 0; min-height: calc(100vh - var(--vt-header-height)); }
+        .sidebar { background: #ffffff; border-right: 1px solid var(--vt-border); padding: 18px 14px; }
+        .sidebar-group { display: flex; flex-direction: column; gap: 6px; }
+        .sidebar-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--vt-text-muted); padding: 8px 12px 10px; }
+        .sidebar-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; border-radius: 10px; color: var(--vt-text-secondary); font-size: 14px; font-weight: 600; border: 1px solid transparent; transition: all 0.18s ease; }
+        .sidebar-item:hover { background: #f1f5f9; color: var(--vt-text-primary); border-color: var(--vt-border); }
+        .sidebar-item.active { background: var(--vt-brand-light); color: var(--vt-brand); border-color: var(--vt-brand-border); }
+        .sidebar-item svg { width: 16px; height: 16px; }
+        .main-content { flex: 1; min-width: 0; width: 100%; padding: 24px 0 64px; }
+        .container { max-width: calc(var(--vt-max-width) + 24px); width: 100%; min-width: 0; margin: 0 auto; padding: 0 24px; }
+        .page-header { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--vt-border); }
+        .page-header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; color: var(--vt-text-primary); }
+        .page-subtitle { font-size: 14px; color: var(--vt-text-muted); margin-top: 2px; }
+        .vt-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 16px; font-size: 14px; font-weight: 600; line-height: 1.2; border-radius: 12px; border: 1px solid transparent; cursor: pointer; white-space: nowrap; transition: all 0.18s ease; user-select: none; }
+        .vt-btn-primary { background: linear-gradient(135deg, var(--vt-brand), #2f52b0); color: #ffffff !important; border-color: rgba(30,58,138,0.6); box-shadow: 0 10px 22px rgba(30,58,138,0.22); }
+        .vt-btn-primary:hover { background: linear-gradient(135deg, var(--vt-brand-hover), #3a5fc0); border-color: rgba(30,58,138,0.8); color: #ffffff !important; transform: translateY(-1px); }
+        .vt-btn-secondary { background: #ffffff; color: var(--vt-text-primary) !important; border-color: var(--vt-border); box-shadow: var(--vt-shadow-sm); }
+        .vt-btn-secondary:hover { background: #f1f5f9; border-color: var(--vt-border-strong); }
+        .vt-btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 10px; }
+        .vt-btn-lg { padding: 12px 20px; font-size: 15px; }
+        .vt-btn-full { width: 100%; }
+        .vt-card { background: #ffffff; border: 1px solid var(--vt-border); border-radius: var(--vt-radius-lg); padding: 20px; box-shadow: var(--vt-shadow-sm); }
+        .vt-card-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 14px; margin-bottom: 16px; border-bottom: 1px solid var(--vt-border); }
+        .vt-card-title { font-size: 15px; font-weight: 700; color: var(--vt-text-primary); }
+        .vt-card-subtitle { font-size: 12px; color: var(--vt-text-muted); }
+        .vt-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 9px; font-size: 11px; font-weight: 700; font-family: var(--vt-font-mono); border-radius: var(--vt-radius-pill); border: 1px solid transparent; text-transform: uppercase; letter-spacing: 0.03em; white-space: nowrap; }
+        .vt-badge-verified { background-color: rgba(32, 201, 151, 0.12); color: var(--vt-verified); border-color: rgba(32, 201, 151, 0.38); }
+        .vt-badge-disputed { background-color: rgba(255, 107, 107, 0.12); color: var(--vt-disputed); border-color: rgba(255, 107, 107, 0.32); }
+        .vt-badge-warning { background-color: rgba(244, 185, 66, 0.12); color: var(--vt-warning); border-color: rgba(244, 185, 66, 0.42); }
+        .vt-badge-neutral { background: rgba(148,163,184,0.08); color: var(--vt-text-muted); border-color: var(--vt-border); }
+        .vt-badge-info { background: rgba(91,124,255,0.14); color: var(--vt-brand); border-color: rgba(91,124,255,0.32); }
+        .vt-mono { font-family: var(--vt-font-mono); }
+        .vt-subtext { font-size: 12px; color: var(--vt-text-muted); }
+        .vt-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--vt-text-muted); display: block; margin-bottom: 4px; }
+        .footer { position: relative; margin-top: auto; border-top: 1px solid var(--vt-border); background: linear-gradient(180deg, #ffffff, #f5f8fd); color: var(--vt-text-muted); padding: 52px 0 0; overflow: hidden; }
+        .footer::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(30, 58, 138, 0.35), rgba(5, 150, 105, 0.25), transparent); }
+        .footer-inner { display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
+        .footer-brand { max-width: 340px; display: flex; flex-direction: column; gap: 14px; }
+        .footer-brand__logo { display: flex; align-items: center; gap: 8px; }
+        .footer-brand__logo img { width: 50px; height: 50px; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(30, 58, 138, 0.16)); }
+        .footer-brand strong { font-size: 18px; font-weight: 800; letter-spacing: -0.01em; color: #0f172a; }
+        .footer-brand strong .wordmark__truth { background: linear-gradient(135deg, #2563eb, #4f7cff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .footer-tagline { font-size: 12.5px; color: var(--vt-text-secondary); line-height: 1.65; }
+        .footer-copy { font-size: 12px; color: var(--vt-text-muted); line-height: 1.6; }
+        .footer-columns { display: flex; gap: 56px; flex-wrap: wrap; }
+        .footer-column { display: flex; flex-direction: column; gap: 12px; }
+        .footer-column h4 { position: relative; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--vt-text-primary); padding-bottom: 8px; }
+        .footer-column h4::after { content: ""; position: absolute; left: 0; bottom: 0; width: 18px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, var(--vt-brand), rgba(30, 58, 138, 0.15)); }
+        .footer-column ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+        .footer-column li { font-size: 12.5px; }
+        .footer-column a { position: relative; display: inline-flex; align-items: center; gap: 6px; color: var(--vt-text-muted); transition: color 0.2s ease, transform 0.2s ease; }
+        .footer-column a::before { content: "›"; font-size: 13px; opacity: 0; transform: translateX(-5px); transition: opacity 0.2s ease, transform 0.2s ease; color: var(--vt-brand); }
+        .footer-column a:hover { color: var(--vt-brand); transform: translateX(3px); }
+        .footer-column a:hover::before { opacity: 1; transform: translateX(0); }
+        .footer-bottom { margin-top: 44px; border-top: 1px solid var(--vt-border); background: #eef2f8; }
+        .footer-bottom__inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 16px 0; font-size: 11.5px; color: var(--vt-text-muted); }
+        .footer-bottom__links { display: flex; align-items: center; gap: 18px; }
+        .footer-bottom__links a { color: var(--vt-text-muted); transition: color 0.2s ease; }
+        .footer-bottom__links a:hover { color: var(--vt-brand); }
+        .footer-status { display: inline-flex; align-items: center; gap: 7px; }
+        .footer-status__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--vt-trusted); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.5); animation: vt-pulse 2.4s ease-out infinite; }
+        @keyframes vt-pulse { 0% { box-shadow: 0 0 0 0 rgba(32, 201, 151, 0.45); } 70% { box-shadow: 0 0 0 7px rgba(32, 201, 151, 0); } 100% { box-shadow: 0 0 0 0 rgba(32, 201, 151, 0); } }
+        @media (prefers-reduced-motion: reduce) { .footer-status__dot { animation: none; } .footer-column a, .footer-column a::before { transition: none; } }
+        @media (max-width: 1024px) { .workbench-grid, .report-split-grid { grid-template-columns: 1fr; } .stats-row, .feature-grid, .timeline-steps { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 640px) { .stats-row, .feature-grid, .timeline-steps { grid-template-columns: 1fr; } .menu-toggle { display: block; } .nav-links { display: none; position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: rgba(15, 17, 28, 0.96); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.10); border-radius: 16px; flex-direction: column; padding: 16px; } .nav-links.open { display: flex; } }
+        /* ── Login-gate modal (compact sign-in prompt before analysis) ── */
+        .lgate {
+            position: fixed;
+            inset: 0;
+            z-index: 4000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+        .lgate[hidden] { display: none; }
+        .lgate__card {
+            position: relative;
+            width: min(380px, 100%);
+            background: #ffffff;
+            border: 1px solid var(--vt-border);
+            border-radius: 18px;
+            box-shadow: var(--vt-shadow-lg);
+            padding: 34px 30px 22px;
+            text-align: center;
+        }
+        .lgate__close {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            width: 30px;
+            height: 30px;
+            border: 0;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--vt-text-muted);
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+        .lgate__close:hover { background: #f1f5f9; color: var(--vt-text-primary); }
+        .lgate__icon {
+            width: 112px;
+            height: 112px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(37, 99, 235, 0.10);
+            color: var(--vt-brand);
+        }
+        .lgate__icon img { width: 92px; height: 92px; object-fit: contain; display: block; }
+        .lgate__title { font-size: 18px; margin-bottom: 6px; }
+        .lgate__desc { font-size: 13px; color: var(--vt-text-secondary); line-height: 1.6; margin-bottom: 20px; }
+        .lgate__actions { display: flex; justify-content: center; }
+        .lgate__actions .vt-btn-primary { background: linear-gradient(135deg, #2563eb, #4f7cff); border: 1px solid rgba(147, 180, 255, 0.4); box-shadow: 0 10px 24px rgba(46, 92, 230, 0.30); color: #ffffff !important; }
+        .lgate__signup { margin: 14px 0 0; font-size: 12.5px; color: var(--vt-text-muted); }
+        .lgate__signup a { color: var(--vt-brand); font-weight: 600; }
+        .lgate__later {
+            margin-top: 8px;
+            border: 0;
+            background: transparent;
+            padding: 6px 14px;
+            font-family: inherit;
+            font-size: 12.5px;
+            color: var(--vt-text-muted);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+        .lgate__later:hover { color: var(--vt-text-primary); background: #f1f5f9; }
+    </style>
+</head>
+<body>
+    <div class="site-shell">
+        <header class="topbar">
+            <div class="topbar-inner">
+                <div class="brand-wrapper">
+                    <a class="brand" href="/">
+                        <img class="brand-mark" src="{% static 'images/veritruth-logo.png' %}" alt="VeriTruth logo">
+                        <span class="wordmark"><span class="wordmark__veri">Veri</span><span class="wordmark__truth">Truth</span></span>
+                    </a>
+                </div>
+
+                <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+
+                <nav class="nav-links" id="main-nav" aria-label="Primary navigation">
+                    <div class="nav-dropdown">
+                        <button class="nav-menu-trigger" type="button" aria-expanded="false" data-dropdown-trigger="analysis-menu">
+                            <span>Analyze</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                        </button>
+                        <div class="nav-dropdown-panel" id="analysis-menu">
+                            <div class="menu-grid">
+                                <a class="menu-item" href="/" data-login-gate>
+                                    <span class="menu-icon">✦</span>
+                                    <span class="menu-text"><strong>Text Analysis</strong><span>Check a news claim for credibility</span></span>
+                                </a>
+                                <a class="menu-item" href="/" data-login-gate>
+                                    <span class="menu-icon">▣</span>
+                                    <span class="menu-text"><strong>URL Analysis</strong><span>Verify a news article link</span></span>
+                                </a>
+                                <a class="menu-item" href="/" data-login-gate>
+                                    <span class="menu-icon">◌</span>
+                                    <span class="menu-text"><strong>Image / OCR</strong><span>Extract and analyze text from images</span></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="/history/">History</a>
+                    <a href="/about/">About</a>
+                    <div class="vt-lang" id="vtLang">
+                        <button type="button" class="vt-lang__btn" id="vtLangBtn"
+                                aria-haspopup="listbox" aria-expanded="false" aria-label="Select language">
+                            <svg class="vt-lang__globe" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                            <span class="vt-lang__label" id="vtLangLabel">EN</span>
+                            <svg class="vt-lang__chev" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <ul class="vt-lang__menu" id="vtLangMenu" role="listbox" aria-label="Language">
+                            <li role="option" data-value="en" aria-selected="true" tabindex="-1">EN</li>
+                            <li role="option" data-value="hi" aria-selected="false" tabindex="-1">Hindi</li>
+                            <li role="option" data-value="te" aria-selected="false" tabindex="-1">Telugu</li>
+                            <li role="option" data-value="ta" aria-selected="false" tabindex="-1">Tamil</li>
+                            <li role="option" data-value="bn" aria-selected="false" tabindex="-1">Bengali</li>
+                            <li role="option" data-value="mr" aria-selected="false" tabindex="-1">Marathi</li>
+                            <li role="option" data-value="es" aria-selected="false" tabindex="-1">Spanish</li>
+                            <li role="option" data-value="fr" aria-selected="false" tabindex="-1">French</li>
+                            <li role="option" data-value="de" aria-selected="false" tabindex="-1">German</li>
+                        </ul>
+                        <select class="language-select vt-lang__native" id="languageSelect"
+                                aria-hidden="true" tabindex="-1">
+                            <option value="en">EN</option>
+                            <option value="hi">Hindi</option>
+                            <option value="te">Telugu</option>
+                            <option value="ta">Tamil</option>
+                            <option value="bn">Bengali</option>
+                            <option value="mr">Marathi</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                            <option value="de">German</option>
+                        </select>
+                    </div>
+                    <div id="google_translate_element" class="language-translate-widget" aria-hidden="true"></div>
+                    {% if user.is_authenticated %}
+                        <span class="nav-user">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            {{ user.username }}
+                        </span>
+                        <a class="vt-btn vt-btn-secondary vt-btn-sm" href="/logout/">Sign Out</a>
+                    {% else %}
+                        <a class="vt-btn vt-btn-primary vt-btn-sm" href="/login/">Signup / Login</a>
+                    {% endif %}
+                </nav>
+            </div>
+        </header>
+
+        <div class="app-shell">
+            <aside class="sidebar" aria-label="Sidebar navigation">
+                <div class="sidebar-group">
+                    <div class="sidebar-section-label">Overview</div>
+                    <a class="sidebar-item active" href="/">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11.5 12 4l9 7.5"></path><path d="M5 10.5V20h14v-9.5"></path></svg>
+                        <span>Home</span>
+                    </a>
+                    <a class="sidebar-item" href="/?mode=text#analysis-form" data-login-gate>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                        <span>Analyze</span>
+                    </a>
+                    <a class="sidebar-item" href="/?mode=url#analysis-form" data-login-gate>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L12 4"></path><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L12 20"></path></svg>
+                        <span>URL Analysis</span>
+                    </a>
+                    <a class="sidebar-item" href="/?mode=image#analysis-form" data-login-gate>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M8 9h8"></path><path d="M8 13h5"></path></svg>
+                        <span>Image / OCR</span>
+                    </a>
+                    <a class="sidebar-item" href="/history/">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18"></path><path d="M12 3v18"></path><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg>
+                        <span>History</span>
+                    </a>
+                    <a class="sidebar-item" href="/about/">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+                        <span>About</span>
+                    </a>
+                    <a class="sidebar-item" href="/faq/">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M9.09 9a3 3 0 1 1 5.82 1c-2 2-3 2.5-3 4"></path><path d="M12 17h.01"></path></svg>
+                        <span>FAQ</span>
+                    </a>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <div class="container">
+                    {% block content %}{% endblock %}
+                </div>
+            </main>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             VERITRUTH TOAST NOTIFICATION SYSTEM
+             Renders Django messages framework messages as floating toasts.
+             Position: top-right. Auto-dismiss. Manual close supported.
+        ════════════════════════════════════════════════════════════════ -->
+        <div id="vt-toast-region" aria-live="polite" aria-atomic="false" role="region"
+             aria-label="Notifications" style="
+            position: fixed;
+            top: 84px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: min(380px, calc(100vw - 40px));
+            pointer-events: none;
+        "></div>
+
+        <style>
+        /* ── Toast base ─────────────────────────────────────────────────── */
+        .vt-toast {
+            pointer-events: all;
+            display: flex;
+            align-items: flex-start;
+            gap: 11px;
+            padding: 13px 14px 13px 15px;
+            border-radius: 12px;
+            border-left: 3px solid transparent;
+            font-family: var(--vt-font-sans);
+            font-size: 13.5px;
+            line-height: 1.45;
+            color: var(--vt-text-primary);
+            background: #ffffff;
+            box-shadow: var(--vt-shadow-lg), 0 2px 6px rgba(15, 23, 42, 0.08);
+            border: 1px solid var(--vt-border);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            min-width: 280px;
+            max-width: 380px;
+            width: 100%;
+            opacity: 0;
+            transform: translateX(24px);
+            transition: opacity 0.22s ease, transform 0.22s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .vt-toast.vt-toast--in {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .vt-toast.vt-toast--out {
+            opacity: 0;
+            transform: translateX(24px);
+            transition: opacity 0.18s ease, transform 0.18s ease;
+        }
+        /* ── Colour variants ────────────────────────────────────────────── */
+        .vt-toast--success {
+            border-left-color: var(--vt-verified);
+            background: #ecfdf5;
+        }
+        .vt-toast--error {
+            border-left-color: var(--vt-disputed);
+            background: #fef2f2;
+        }
+        .vt-toast--warning {
+            border-left-color: var(--vt-warning);
+            background: #fffbeb;
+        }
+        .vt-toast--info {
+            border-left-color: var(--vt-brand);
+            background: #eff6ff;
+        }
+        /* ── Icon ───────────────────────────────────────────────────────── */
+        .vt-toast__icon {
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            margin-top: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-style: normal;
+        }
+        .vt-toast--success .vt-toast__icon { color: var(--vt-verified); }
+        .vt-toast--error   .vt-toast__icon { color: var(--vt-disputed); }
+        .vt-toast--warning .vt-toast__icon { color: var(--vt-warning); }
+        .vt-toast--info    .vt-toast__icon { color: var(--vt-brand); }
+        /* ── Body ───────────────────────────────────────────────────────── */
+        .vt-toast__body {
+            flex: 1;
+            min-width: 0;
+        }
+        .vt-toast__title {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--vt-text-primary);
+            margin-bottom: 2px;
+        }
+        .vt-toast__msg {
+            font-size: 12.5px;
+            color: var(--vt-text-secondary);
+            word-wrap: break-word;
+        }
+        /* ── Progress bar ────────────────────────────────────────────────── */
+        .vt-toast__bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 2px;
+            border-radius: 0 0 12px 12px;
+            width: 100%;
+            transform-origin: left;
+            animation: vtBarShrink linear forwards;
+        }
+        .vt-toast--success .vt-toast__bar { background: var(--vt-verified); }
+        .vt-toast--error   .vt-toast__bar { background: var(--vt-disputed); }
+        .vt-toast--warning .vt-toast__bar { background: var(--vt-warning); }
+        .vt-toast--info    .vt-toast__bar { background: var(--vt-brand); }
+        @keyframes vtBarShrink {
+            from { transform: scaleX(1); }
+            to   { transform: scaleX(0); }
+        }
+        /* ── Close button ────────────────────────────────────────────────── */
+        .vt-toast__close {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            color: var(--vt-text-muted);
+            font-size: 16px;
+            line-height: 1;
+            padding: 0;
+            margin-top: 0;
+            transition: color 0.15s ease, background 0.15s ease;
+        }
+        .vt-toast__close:hover {
+            color: var(--vt-text-primary);
+            background: #f1f5f9;
+        }
+        /* ── Mobile ─────────────────────────────────────────────────────── */
+        @media (max-width: 480px) {
+            #vt-toast-region {
+                top: auto !important;
+                bottom: 80px !important;
+                right: 12px !important;
+                left: 12px !important;
+                max-width: none !important;
+            }
+            .vt-toast {
+                min-width: 0;
+                max-width: none;
+            }
+        }
+        </style>
+
+        <script>
+        /* ── VeriTruth Toast Engine ──────────────────────────────────────── */
+        (function () {
+            const REGION = document.getElementById('vt-toast-region');
+
+            const CONFIG = {
+                success : { title: 'Success',     icon: '✓',  duration: 3800 },
+                error   : { title: 'Error',        icon: '✕',  duration: 6000 },
+                warning : { title: 'Warning',      icon: '⚠',  duration: 4800 },
+                info    : { title: 'Info',         icon: 'ⓘ',  duration: 3800 },
+            };
+
+            /**
+             * vtToast(message, type, [title])
+             *   type: 'success' | 'error' | 'warning' | 'info'
+             * Exposed globally so other scripts can call it.
+             */
+            window.vtToast = function (message, type, title) {
+                type  = CONFIG[type] ? type : 'info';
+                const cfg = CONFIG[type];
+                const label = title || cfg.title;
+
+                const el = document.createElement('div');
+                el.className  = 'vt-toast vt-toast--' + type;
+                el.setAttribute('role', 'alert');
+                el.setAttribute('aria-live', 'assertive');
+                el.innerHTML =
+                    '<span class="vt-toast__icon" aria-hidden="true">' + cfg.icon + '</span>' +
+                    '<div class="vt-toast__body">' +
+                        '<div class="vt-toast__title">' + _esc(label) + '</div>' +
+                        '<div class="vt-toast__msg">'   + _esc(message) + '</div>' +
+                    '</div>' +
+                    '<button class="vt-toast__close" aria-label="Dismiss notification" type="button">&#x2715;</button>' +
+                    '<span class="vt-toast__bar" style="animation-duration:' + cfg.duration + 'ms"></span>';
+
+                REGION.appendChild(el);
+
+                // Animate in (next frame so transition fires)
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(function () { el.classList.add('vt-toast--in'); });
+                });
+
+                // Close button
+                el.querySelector('.vt-toast__close').addEventListener('click', function () {
+                    _dismiss(el);
+                });
+
+                // Auto-dismiss
+                var timer = setTimeout(function () { _dismiss(el); }, cfg.duration);
+
+                // Pause timer on hover
+                el.addEventListener('mouseenter', function () { clearTimeout(timer); });
+                el.addEventListener('mouseleave', function () {
+                    timer = setTimeout(function () { _dismiss(el); }, 1200);
+                });
+            };
+
+            function _dismiss(el) {
+                el.classList.add('vt-toast--out');
+                el.addEventListener('transitionend', function () {
+                    if (el.parentNode) el.parentNode.removeChild(el);
+                }, { once: true });
+            }
+
+            function _esc(str) {
+                return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;');
+            }
+
+            /* ── Render Django messages injected by the server ──────────── */
+            document.addEventListener('DOMContentLoaded', function () {
+                var msgs = window._vtServerMessages || [];
+                msgs.forEach(function (m) {
+                    window.vtToast(m.message, m.type, m.title || null);
+                });
+            });
+        }());
+        </script>
+
+        <!-- Django messages → JS bridge (rendered server-side, one per page load) -->
+        {% if messages %}
+        <script>
+        window._vtServerMessages = [
+            {% for message in messages %}
+            {
+                "message": "{{ message|escapejs }}",
+                "type": "{% if message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% elif message.tags == 'success' %}success{% else %}info{% endif %}",
+                "title": null
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+        </script>
+        {% endif %}
+
+        <footer class="footer">
+            <div class="container footer-inner">
+                <div class="footer-brand">
+                    <div class="footer-brand__logo">
+                        <img src="{% static 'images/veritruth-logo.png' %}" alt="VeriTruth logo">
+                        <strong><span class="wordmark__veri">Veri</span><span class="wordmark__truth">Truth</span></strong>
+                    </div>
+                    <div class="footer-tagline">
+                        AI-powered news verification. BERT decides, Groq explains — evidence-led analysis you can trust.
+                    </div>
+                    <div class="footer-copy">
+                        &copy; 2026 VeriTruth. All rights reserved.
+                    </div>
+                </div>
+
+                <div class="footer-columns">
+                    <div class="footer-column">
+                        <h4>Platform</h4>
+                        <ul>
+                            <li><a href="/">Workbench</a></li>
+                            <li><a href="/history/">Log History</a></li>
+                            <li><a href="/about/">Overview</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="/faq/">FAQ</a></li>
+                            <li><a href="/support/">Help Center</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-column">
+                        <h4>Policy</h4>
+                        <ul>
+                            <li><a href="/terms/">Terms</a></li>
+                            <li><a href="/privacy/">Privacy</a></li>
+                            <li><a href="/disclaimer/">Disclaimer</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="container footer-bottom__inner">
+                    <span class="footer-status">
+                        <span class="footer-status__dot" aria-hidden="true"></span>
+                        All systems operational
+                    </span>
+                    <div class="footer-bottom__links">
+                        <a href="/terms/">Terms</a>
+                        <a href="/privacy/">Privacy</a>
+                        <a href="/disclaimer/">Disclaimer</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- FLOATING AI ASSISTANT CHAT WIDGET -->
+    <style>
+        .fab-chat-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 40%, #4f46e5 100%);
+            color: #FFFFFF;
+            border: 3px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 14px 28px rgba(37, 99, 235, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 9999;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+        }
+
+        .fab-chat-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 18px 34px rgba(37, 99, 235, 0.52);
+        }
+
+        .fab-chat-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .fab-pulse-ring {
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            border-radius: 50%;
+            border: 2px solid rgba(59, 130, 246, 0.8);
+            opacity: 0.8;
+            animation: fabPulse 2s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes fabPulse {
+            0% { transform: scale(1); opacity: 0.75; }
+            50% { transform: scale(1.18); opacity: 0; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+
+        .chat-drawer-box {
+            display: none;
+            position: fixed;
+            bottom: 92px;
+            right: 24px;
+            width: 360px;
+            max-width: calc(100vw - 32px);
+            height: 480px;
+            max-height: calc(100vh - 120px);
+            background: linear-gradient(180deg, #f8fbff 0%, #edf4ff 100%);
+            border: 1px solid rgba(91, 124, 255, 0.28);
+            border-radius: 18px;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+            z-index: 9999;
+            flex-direction: column;
+            overflow: hidden;
+            animation: chatSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .chat-drawer-box.active {
+            display: flex;
+        }
+
+        @keyframes chatSlideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 42%, #4f46e5 100%);
+            color: #FFFFFF;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .chat-header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-avatar-box {
+            width: 34px;
+            height: 34px;
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .chat-title-text h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin: 0;
+            color: #FFFFFF;
+        }
+
+        .chat-title-text span {
+            font-size: 11px;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #e0e7ff;
+        }
+
+        .chat-status-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #34d399;
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.18);
+        }
+
+        .chat-close-btn {
+            background: transparent;
+            border: none;
+            color: #FFFFFF;
+            font-size: 22px;
+            cursor: pointer;
+            opacity: 0.9;
+            transition: opacity 0.15s ease, transform 0.15s ease;
+        }
+
+        .chat-close-btn:hover {
+            opacity: 1;
+            transform: scale(1.08);
+        }
+
+        .chat-body-feed {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+        }
+
+        .chat-msg {
+            max-width: 82%;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            line-height: 1.45;
+            word-break: break-word;
+        }
+
+        .chat-msg-ai {
+            align-self: flex-start;
+            background: #ffffff;
+            color: #0f172a;
+            border: 1px solid #cfe0ff;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.08);
+        }
+
+        .chat-msg-user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+            color: #FFFFFF;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+        }
+
+        .chat-chip-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .chat-chip {
+            font-size: 11.5px;
+            padding: 6px 10px;
+            background: linear-gradient(180deg, #ffffff, #eef6ff);
+            border: 1px solid #bfdbfe;
+            border-radius: 16px;
+            color: #1d4ed8;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-weight: 600;
+        }
+
+        .chat-chip:hover {
+            background: #e0edff;
+            border-color: #60a5fa;
+            transform: translateY(-1px);
+        }
+
+        .chat-footer-bar {
+            padding: 10px 12px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            border-top: 1px solid rgba(91,124,255,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-input-field {
+            flex: 1;
+            padding: 9px 12px;
+            font-size: 13px;
+            border: 1px solid #bfd0ff;
+            border-radius: 20px;
+            outline: none;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            background: #ffffff;
+            color: #0f172a;
+        }
+
+        .chat-input-field:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+        }
+
+        .chat-send-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+            color: #FFFFFF;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.25);
+        }
+
+        .chat-send-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 18px rgba(37, 99, 235, 0.3);
+        }
+    </style>
+
+    <div class="fab-chat-btn" id="fabChatBtn" title="Ask VeriTruth AI Assistant">
+        <div class="fab-pulse-ring"></div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+    </div>
+
+    <div class="chat-drawer-box" id="chatDrawerBox">
+        <div class="chat-header">
+            <div class="chat-header-title">
+                <div class="chat-avatar-box">VT</div>
+                <div class="chat-title-text">
+                    <h4>VeriTruth AI Assistant</h4>
+                    <span><span class="chat-status-dot"></span> Online • VeriTruth AI Engine</span>
+                </div>
+            </div>
+            <button class="chat-close-btn" id="chatCloseBtn">&times;</button>
+        </div>
+
+        <div class="chat-body-feed" id="chatBodyFeed">
+            <div class="chat-msg chat-msg-ai">
+                Hello! I'm your <strong>VeriTruth AI Assistant</strong>. Ask me anything about news credibility, how trust scores work, or verifying claims.
+            </div>
+            <div class="chat-chip-container">
+                <span class="chat-chip" onclick="sendChatQuery('How does Trust Score work?')">💡 How Trust Score works</span>
+                <span class="chat-chip" onclick="sendChatQuery('How to verify a news URL?')">🔍 How to verify a URL</span>
+                <span class="chat-chip" onclick="sendChatQuery('Upload document OCR guide')">📄 Upload OCR guide</span>
+            </div>
+        </div>
+
+        <div class="chat-footer-bar">
+            <input type="text" class="chat-input-field" id="chatInputField" placeholder="Ask AI Assistant a question..." onkeydown="if(event.key==='Enter') triggerSendChat()">
+            <button class="chat-send-btn" id="chatSendBtn" onclick="triggerSendChat()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function syncGoogleLanguage() {
+            const languageSelect = document.getElementById('languageSelect');
+            const translateSelect = document.querySelector('.goog-te-combo');
+            if (!languageSelect || !translateSelect) return;
+
+            translateSelect.value = languageSelect.value;
+            translateSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        function googleTranslateReady() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,hi,te,ta,bn,mr,es,fr,de',
+                autoDisplay: false
+            }, 'google_translate_element');
+            window.setTimeout(syncGoogleLanguage, 100);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const languageSelect = document.getElementById('languageSelect');
+            if (!languageSelect) return;
+
+            languageSelect.addEventListener('change', function() {
+                syncGoogleLanguage();
+            });
+
+            /* ── Custom dropdown behaviour ─────────────────────────────── */
+            const wrap  = document.getElementById('vtLang');
+            const btn   = document.getElementById('vtLangBtn');
+            const menu  = document.getElementById('vtLangMenu');
+            const label = document.getElementById('vtLangLabel');
+            if (!wrap || !btn || !menu || !label) return;
+
+            const items = Array.from(menu.querySelectorAll('[role="option"]'));
+
+            function reflect() {
+                const current = languageSelect.options[languageSelect.selectedIndex];
+                label.textContent = current ? current.textContent.trim() : 'EN';
+                btn.setAttribute('aria-label', 'Select language: ' + label.textContent);
+                items.forEach(function(li) {
+                    li.setAttribute('aria-selected', String(li.dataset.value === languageSelect.value));
+                });
+            }
+
+            function setOpen(open) {
+                wrap.classList.toggle('open', open);
+                btn.setAttribute('aria-expanded', String(open));
+                if (open) {
+                    const selected = menu.querySelector('[aria-selected="true"]') || items[0];
+                    if (selected) selected.focus();
+                }
+            }
+
+            function choose(li) {
+                if (languageSelect.value !== li.dataset.value) {
+                    languageSelect.value = li.dataset.value;
+                    languageSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+                reflect();
+                setOpen(false);
+                btn.focus();
+            }
+
+            btn.addEventListener('click', function(event) {
+                event.stopPropagation();
+                setOpen(!wrap.classList.contains('open'));
+            });
+
+            btn.addEventListener('keydown', function(event) {
+                if (event.key === 'ArrowDown' && !wrap.classList.contains('open')) {
+                    event.preventDefault();
+                    setOpen(true);
+                }
+            });
+
+            menu.addEventListener('keydown', function(event) {
+                const index = items.indexOf(document.activeElement);
+                if (event.key === 'ArrowDown') {
+                    event.preventDefault();
+                    items[(index + 1) % items.length].focus();
+                } else if (event.key === 'ArrowUp') {
+                    event.preventDefault();
+                    items[(index - 1 + items.length) % items.length].focus();
+                } else if (event.key === 'Home') {
+                    event.preventDefault();
+                    items[0].focus();
+                } else if (event.key === 'End') {
+                    event.preventDefault();
+                    items[items.length - 1].focus();
+                } else if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    if (index > -1) choose(items[index]);
+                } else if (event.key === 'Escape') {
+                    event.preventDefault();
+                    setOpen(false);
+                    btn.focus();
+                } else if (event.key === 'Tab') {
+                    setOpen(false);
+                }
+            });
+
+            items.forEach(function(li) {
+                li.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    choose(li);
+                });
+            });
+
+            document.addEventListener('click', function(event) {
+                if (wrap.classList.contains('open') && !wrap.contains(event.target)) {
+                    setOpen(false);
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && wrap.classList.contains('open')
+                    && !menu.contains(document.activeElement)) {
+                    setOpen(false);
+                }
+            });
+
+            languageSelect.addEventListener('change', reflect);
+            reflect();
+        });
+    </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateReady"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll("#main-nav a");
+            const dropdownTrigger = document.querySelector("[data-dropdown-trigger='analysis-menu']");
+            const dropdownPanel = document.getElementById("analysis-menu");
+            const topbar = document.querySelector(".topbar");
+            const menuToggle = document.querySelector(".menu-toggle");
+            const mainNav = document.getElementById("main-nav");
+            const fabBtn = document.getElementById('fabChatBtn');
+            const drawer = document.getElementById('chatDrawerBox');
+            const closeBtn = document.getElementById('chatCloseBtn');
+
+            if (dropdownTrigger && dropdownPanel) {
+                dropdownTrigger.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    const isOpen = dropdownPanel.classList.contains('open');
+                    dropdownPanel.classList.toggle('open', !isOpen);
+                    dropdownTrigger.classList.toggle('active', !isOpen);
+                    dropdownTrigger.setAttribute('aria-expanded', String(!isOpen));
+                });
+
+                document.addEventListener('click', function(event) {
+                    if (!dropdownTrigger.contains(event.target) && !dropdownPanel.contains(event.target)) {
+                        dropdownPanel.classList.remove('open');
+                        dropdownTrigger.classList.remove('active');
+                        dropdownTrigger.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            }
+
+            navLinks.forEach(link => {
+                const href = link.getAttribute("href");
+                if (href === currentPath || (href !== "/" && currentPath.startsWith(href))) {
+                    link.classList.add("active");
+                }
+            });
+
+            if (menuToggle && mainNav) {
+                menuToggle.addEventListener("click", function() {
+                    const isOpen = mainNav.classList.toggle("open");
+                    menuToggle.setAttribute("aria-expanded", String(isOpen));
+                });
+            }
+
+            if (fabBtn && drawer) {
+                fabBtn.addEventListener('click', function() {
+                    drawer.classList.toggle('active');
+                });
+            }
+
+            if (closeBtn && drawer) {
+                closeBtn.addEventListener('click', function() {
+                    drawer.classList.remove('active');
+                });
+            }
+        });
+
+        function sendChatQuery(msgText) {
+            const inputField = document.getElementById('chatInputField');
+            if (inputField) {
+                inputField.value = msgText;
+                triggerSendChat();
+            }
+        }
+
+        function triggerSendChat() {
+            const inputField = document.getElementById('chatInputField');
+            const feed = document.getElementById('chatBodyFeed');
+            if (!inputField || !feed) return;
+
+            const text = inputField.value.trim();
+            if (!text) return;
+
+            // Append User Message
+            const userDiv = document.createElement('div');
+            userDiv.className = 'chat-msg chat-msg-user';
+            userDiv.textContent = text;
+            feed.appendChild(userDiv);
+            inputField.value = '';
+            feed.scrollTop = feed.scrollHeight;
+
+            // Append Typing Indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'chat-msg chat-msg-ai';
+            typingDiv.innerHTML = '<em>VeriTruth AI is thinking...</em>';
+            feed.appendChild(typingDiv);
+            feed.scrollTop = feed.scrollHeight;
+
+            // Fetch Response from API
+            fetch('/api/chat-assistant/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: text })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (feed.contains(typingDiv)) feed.removeChild(typingDiv);
+                const aiDiv = document.createElement('div');
+                aiDiv.className = 'chat-msg chat-msg-ai';
+                aiDiv.innerHTML = data.response || "I have received your request and verified it with the VeriTruth AI Engine.";
+                feed.appendChild(aiDiv);
+                feed.scrollTop = feed.scrollHeight;
+            })
+            .catch(err => {
+                if (feed.contains(typingDiv)) feed.removeChild(typingDiv);
+                const errDiv = document.createElement('div');
+                errDiv.className = 'chat-msg chat-msg-ai';
+                errDiv.textContent = "VeriTruth AI is online and ready.";
+                feed.appendChild(errDiv);
+                feed.scrollTop = feed.scrollHeight;
+            });
+        }
+    </script>
+    {% if not user.is_authenticated %}
+    <div class="lgate" id="lgateBackdrop" hidden>
+        <div class="lgate__card" role="dialog" aria-modal="true" aria-labelledby="lgateTitle">
+            <button class="lgate__close" type="button" aria-label="Close" data-lgate-close>&times;</button>
+            <div class="lgate__icon">
+                <img src="{% static 'images/veritruth-logo.png' %}" alt="VeriTruth logo">
+            </div>
+            <h3 class="lgate__title" id="lgateTitle">Sign in to continue</h3>
+            <p class="lgate__desc">Sign in to analyze news and access your verification results.</p>
+            <div class="lgate__actions">
+                <a class="vt-btn vt-btn-primary vt-btn-lg vt-btn-full" id="lgateSignin" href="/login/">Sign in</a>
+            </div>
+            <p class="lgate__signup">New to VeriTruth? <a id="lgateSignup" href="/signup/">Sign up</a></p>
+            <button class="lgate__later" type="button" data-lgate-close>Maybe later</button>
+        </div>
+    </div>
+    <script>
+        (function () {
+            var backdrop = document.getElementById('lgateBackdrop');
+            var signinLink = document.getElementById('lgateSignin');
+            var signupLink = document.getElementById('lgateSignup');
+            var PENDING_KEY = 'vt_lgate_pending';
+
+            function openGate(nextUrl, pending) {
+                var q = '?next=' + encodeURIComponent(nextUrl);
+                signinLink.href = '/login/' + q;
+                signupLink.href = '/signup/' + q;
+                try {
+                    if (pending) sessionStorage.setItem(PENDING_KEY, JSON.stringify(pending));
+                    else sessionStorage.removeItem(PENDING_KEY);
+                } catch (e) {}
+                backdrop.hidden = false;
+            }
+
+            function closeGate() {
+                backdrop.hidden = true;
+                try { sessionStorage.removeItem(PENDING_KEY); } catch (e) {}
+            }
+
+            backdrop.addEventListener('click', function (e) { if (e.target === backdrop) closeGate(); });
+            backdrop.querySelectorAll('[data-lgate-close]').forEach(function (btn) {
+                btn.addEventListener('click', closeGate);
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && !backdrop.hidden) closeGate();
+            });
+
+            document.addEventListener('click', function (e) {
+                var gate = e.target.closest ? e.target.closest('a[data-login-gate]') : null;
+                if (!gate) return;
+                e.preventDefault();
+                var url = new URL(gate.href, location.href);
+                openGate(url.pathname + url.search + (url.hash || '#analysis-form'), null);
+            }, true);
+
+            var form = document.getElementById('analyze-form-main');
+            if (form) {
+                document.addEventListener('submit', function (e) {
+                    if (e.target !== form) return;
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    var activeTab = document.querySelector('.vt-tab.active');
+                    var mode = activeTab ? activeTab.textContent.trim().toLowerCase() : 'text';
+                    var pending = {};
+                    if (mode === 'url') {
+                        var u = document.getElementById('urlInput');
+                        if (u && u.value.trim()) pending.url = u.value;
+                    } else if (mode === 'text') {
+                        var n = document.getElementById('newsBox');
+                        if (n && n.value.trim()) pending.news = n.value;
+                    }
+                    openGate(location.pathname + location.search + '#analysis-form', pending);
+                }, true);
+            }
+        }());
+    </script>
+    {% endif %}
+    <script>
+        (function () {
+            var PENDING_KEY = 'vt_lgate_pending';
+            var raw = null;
+            try { raw = sessionStorage.getItem(PENDING_KEY); } catch (e) {}
+            if (!raw) return;
+            try { sessionStorage.removeItem(PENDING_KEY); } catch (e) {}
+            var pending;
+            try { pending = JSON.parse(raw); } catch (e) { return; }
+            document.addEventListener('DOMContentLoaded', function () {
+                if (!document.getElementById('analyze-form-main')) return;
+                var tabs = Array.prototype.slice.call(document.querySelectorAll('.vt-tab'));
+                function clickTab(label) {
+                    var tab = tabs.filter(function (t) { return t.textContent.trim().toLowerCase() === label; })[0];
+                    if (tab) tab.click();
+                }
+                if (pending.news) {
+                    clickTab('text');
+                    var newsBox = document.getElementById('newsBox');
+                    if (newsBox) {
+                        newsBox.value = pending.news;
+                        newsBox.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                } else if (pending.url) {
+                    clickTab('url');
+                    var urlInput = document.getElementById('urlInput');
+                    if (urlInput) urlInput.value = pending.url;
+                }
+                var anchor = document.getElementById('analysis-form');
+                if (anchor && pending.news) anchor.scrollIntoView({ behavior: 'instant', block: 'start' });
+            });
+        }());
+    </script>
+</body>
+</html>

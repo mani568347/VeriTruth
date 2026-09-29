@@ -1,0 +1,52 @@
+/* ==========================================================================
+   VeriTruth Admin Dashboard - Light Theme Override
+   New filename on purpose: admin_dashboard.css is cached by browsers, so a
+   fresh sheet is the only reliable way to deliver the token remap.
+   ========================================================================== */
+
+:root {
+    --adm-bg: #f8fafc;
+    --adm-surface: #ffffff;
+    --adm-surface-alt: #f1f5f9;
+    --adm-border: #e2e8f0;
+    --adm-border-hover: rgba(30, 58, 138, 0.45);
+    --adm-primary: #1e3a8a;
+    --adm-primary-hover: #2548b0;
+    --adm-primary-light: rgba(30, 58, 138, 0.10);
+    --adm-text-main: #0f172a;
+    --adm-text-sub: #334155;
+    --adm-text-muted: #64748b;
+    --adm-success: #059669;
+    --adm-success-bg: rgba(5, 150, 105, 0.12);
+    --adm-danger: #dc2626;
+    --adm-danger-bg: rgba(220, 38, 38, 0.10);
+    --adm-warning: #d97706;
+    --adm-warning-bg: rgba(217, 119, 6, 0.12);
+    --adm-info: #2563eb;
+    --adm-info-bg: rgba(37, 99, 235, 0.10);
+    --adm-shadow-sm: 0 6px 18px rgba(15, 23, 42, 0.06);
+    --adm-shadow-md: 0 12px 30px rgba(15, 23, 42, 0.10);
+    --adm-shadow-lg: 0 26px 60px rgba(15, 23, 42, 0.14);
+}
+
+/* Hardcoded strays inside cached admin_dashboard.css */
+.brand-icon {
+    width: 46px !important;
+    height: 46px !important;
+}
+
+.header-search:focus-within {
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.12) !important;
+}
+
+.badge-real {
+    border-color: rgba(5, 150, 105, 0.32) !important;
+}
+
+.badge-fake {
+    border-color: rgba(220, 38, 38, 0.28) !important;
+}
+
+.modal-overlay {
+    background-color: rgba(15, 23, 42, 0.45) !important;
+}

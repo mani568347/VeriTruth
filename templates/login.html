@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load socialaccount %}
+{% get_providers as socialaccount_providers %}
+
+{% block content %}
+
+<style>
+    .auth-submit-btn {
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.18s ease, opacity 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .auth-submit-btn.is-submitting {
+        transform: scale(0.96);
+        opacity: 0;
+        pointer-events: none;
+        box-shadow: 0 0 0 rgba(37, 99, 235, 0);
+    }
+</style>
+
+<div class="auth-wrapper vt-animate-fade">
+    <div class="auth-card">
+        <div class="auth-header">
+            <img src="{% static 'images/veritruth-logo.png' %}" alt="VeriTruth logo" style="width: 58px; height: 58px; object-fit: contain; display: block; margin: 0 auto 12px;">
+            <h2>Account Sign In</h2>
+            <p>Access the VeriTruth News Verification Workspace</p>
+        </div>
+
+        {% if error %}
+            <div class="gov-alert gov-alert-danger" role="alert" aria-live="assertive">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span>{{ error }}</span>
+            </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div style="margin-bottom: 14px;">
+                <label class="vt-label" for="id_email">Email Address*</label>
+                <input id="id_email" type="email" name="email" placeholder="example@gmail.com" required>
+            </div>
+
+            <div style="margin-bottom: 8px;">
+                <label class="vt-label" for="id_password">Password*</label>
+                <input id="id_password" type="password" name="password" placeholder="••••••••" required>
+            </div>
+
+            <div style="text-align: right; margin-bottom: 20px;">
+                <a href="{% url 'password_reset' %}" style="font-size: 12px; font-weight: 500;">Forgot credentials?</a>
+            </div>
+
+            <button type="submit" class="vt-btn vt-btn-primary vt-btn-full auth-submit-btn">
+                <span>Sign In</span>
+            </button>
+        </form>
+
+        <div class="auth-divider">
+            <span>OR</span>
+        </div>
+
+        <a href="{% provider_login_url 'google' process='login' auth_params='prompt=select_account' %}" class="google-btn">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" width="16" alt="Google Logo">
+            <span>Continue with Google</span>
+        </a>
+
+        <div class="auth-footer">
+            Don't have an authorized account? 
+            <a href="/signup/" style="font-weight: 600;">Request Access / Sign Up</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form[method="POST"]');
+        const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+
+        if (!form || !submitBtn) return;
+
+        form.addEventListener('submit', function () {
+            submitBtn.classList.add('is-submitting');
+        });
+    });
+</script>
+
+{% endblock %}

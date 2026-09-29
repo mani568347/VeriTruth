@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{# Client-side toast: fire once per page load to confirm history loaded #}
+{% if logs %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    if (window.vtToast) {
+        window.vtToast('{{ logs|length }} analysis record{{ logs|length|pluralize }} loaded from your history.', 'info');
+    }
+});
+</script>
+{% else %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    if (window.vtToast) {
+        window.vtToast('No previous analyses found. Run your first verification to start building history.', 'info');
+    }
+});
+</script>
+{% endif %}
+
+<div class="page-header">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <h1>Verification Log Register</h1>
+            <p class="page-subtitle">Historical repository of content evaluations, confidence scores, and diagnostic reports.</p>
+        </div>
+        <a href="/" class="vt-btn vt-btn-primary vt-btn-sm">+ New Analysis</a>
+    </div>
+</div>
+
+<div class="history-toolbar">
+    <div class="history-search">
+        <input type="text" id="tableSearch" placeholder="Filter logs by keyword or claim text...">
+    </div>
+    <div class="history-actions">
+        <select id="statusFilter" style="width: auto;">
+            <option value="all">All Verdicts</option>
+            <option value="verified">Verified Only</option>
+            <option value="disputed">Disputed Only</option>
+        </select>
+        <button onclick="window.print()" class="vt-btn vt-btn-secondary vt-btn-sm">Export Log</button>
+    </div>
+</div>
+
+{% if logs %}
+    <div class="vt-table-container vt-animate-fade">
+        <table class="vt-table" id="historyTable">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Submission Payload</th>
+                    <th>Verdict</th>
+                    <th>ML Confidence</th>
+                    <th>Trust Index</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                    <tr class="log-row" data-verdict="{% if log.prediction == 'Real News' %}verified{% else %}disputed{% endif %}">
+                        <td class="vt-mono" style="white-space: nowrap; font-size: 12px;">{{ log.created_at|date:"Y-m-d H:i" }}</td>
+                        <td>
+                            <div style="max-width: 440px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--vt-text-primary); font-weight: 600;">
+                                {{ log.user_input|truncatechars:110 }}
+                            </div>
+                        </td>
+                        <td>
+                            {% if log.prediction == 'Real News' %}
+                                <span class="vt-badge vt-badge-verified">Verified</span>
+                            {% else %}
+                                <span class="vt-badge vt-badge-disputed">Disputed</span>
+                            {% endif %}
+                        </td>
+                        <td class="vt-mono">{{ log.confidence|floatformat:1 }}%</td>
+                        <td><strong class="vt-mono" style="color: var(--vt-text-primary);">{{ log.trust_score|floatformat:1 }}%</strong></td>
+                        <td style="text-align: right;">
+                            <a href="/history/{{ log.id }}/" class="vt-btn vt-btn-secondary vt-btn-sm">
+                                Open
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="empty-state vt-animate-fade">
+        <h3 style="font-size: 16px;">No Evaluation Logs Recorded</h3>
+        <p>You haven't run any content verifications yet. Submit your first article copy or URL to build your history log.</p>
+        <a href="/" class="vt-btn vt-btn-primary" style="margin-top: 12px;">Run First Verification</a>
+    </div>
+{% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('tableSearch');
+    const statusFilter = document.getElementById('statusFilter');
+    const rows = document.querySelectorAll('.log-row');
+
+    function filterTable() {
+        const query = searchInput ? searchInput.value.toLowerCase() : '';
+        const status = statusFilter ? statusFilter.value : 'all';
+
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            const verdict = row.getAttribute('data-verdict');
+
+            const matchesQuery = text.includes(query);
+            const matchesStatus = (status === 'all') || (status === verdict);
+
+            if (matchesQuery && matchesStatus) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    if (searchInput) searchInput.addEventListener('input', filterTable);
+    if (statusFilter) statusFilter.addEventListener('change', filterTable);
+});
+</script>
+
+{% endblock %}

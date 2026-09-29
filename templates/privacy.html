@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>Privacy Policy</h1>
+    <p class="page-subtitle">Last Updated: May 2026 • Platform Information Safeguard Standards</p>
+</div>
+
+<div class="legal-card vt-animate-fade">
+    <div class="legal-section">
+        <h2>1. Information Logging</h2>
+        <p>
+            To maintain security and functionality across the news verification registry, the system logs authentication details, submitted payload text/URL routes, and technical diagnostics.
+        </p>
+    </div>
+
+    <div class="legal-section">
+        <h2>2. Data Encryption & Storage</h2>
+        <p>
+            User credentials are stored using industry-standard password hashing schemes. Historical verification query records are stored in protected database tables linked to the authorized user account. Payloads are processed transiently for model evaluation.
+        </p>
+    </div>
+
+    <div class="legal-section">
+        <h2>3. Third-Party Integrations</h2>
+        <p>
+            Authentication via Google SSO utilizes OAuth protocols directly hosted by Google. VeriTruth does not view or store Google passwords. Context calculations communicate with API services (such as Groq AI explainer models) over encrypted pathways.
+        </p>
+    </div>
+</div>
+
+{% endblock %}
